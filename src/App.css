@@ -1,13 +1,80 @@
-.app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
+:root {
+  --primary-color: #6b46c1;
+  --primary-light: #9f7aea;
+  --primary-dark: #553c9a;
+  --text-light: #f7fafc;
+  --text-dark: #2d3748;
+  --background: #f7fafc;
+}
+
+body {
+  background-color: var(--background);
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 h1 {
-  font-size: 2.5rem;
-  color: #333;
   text-align: center;
+  color: var(--primary-dark);
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.benefit-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(107, 70, 193, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(107, 70, 193, 0.1);
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(107, 70, 193, 0.2);
+  border-color: var(--primary-light);
+}
+
+.benefit-card h2 {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.benefit-card p {
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #e53e3e;
+  font-size: 1.2rem;
+  background: #fff5f5;
+  border-radius: 8px;
+  border: 1px solid #feb2b2;
 } 
