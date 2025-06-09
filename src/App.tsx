@@ -1,11 +1,24 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import { Benefit, mockBenefits } from './types/benefit'
-import BenefitCard from './components/BenefitCard'
-import { getBenefits } from './services/api'
+import { getBenefits, Benefit } from './services/api'
+// import BenefitCard from './components/BenefitCard'
+
+const CATEGORIES = [
+  'Tiendas y Servicios',
+  'Gimnasios',
+  'Recreación y Entretención',
+  'Salud y Estética',
+  'Gastronomía',
+  'Viajes, Hoteles y Trasporte',
+  'Cursos'
+];
 
 function App() {
   const [benefits, setBenefits] = useState<Benefit[]>([]);
+  const [filteredBenefits, setFilteredBenefits] = useState<Benefit[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,16 +29,37 @@ function App() {
       try {
         const data = await getBenefits();
         setBenefits(data);
+        setFilteredBenefits(data);
       } catch (apiError) {
-        console.warn('API fetch failed, using mock data:', apiError);
-        setBenefits(mockBenefits);
-        setError('No se pudo conectar a la API. Mostrando datos de ejemplo.');
+        setError('Error al cargar los beneficios');
+        console.error('Error:', apiError);
       } finally {
         setLoading(false);
       }
     };
+
     fetchBenefits();
   }, []);
+
+  useEffect(() => {
+    let filtered = benefits;
+
+    // Filtrar por categoría
+    if (selectedCategory) {
+      filtered = filtered.filter(benefit => benefit.category === selectedCategory);
+    }
+
+    // Filtrar por búsqueda
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(benefit => 
+        benefit.name.toLowerCase().includes(query) || 
+        benefit.description.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredBenefits(filtered);
+  }, [selectedCategory, searchQuery, benefits]);
 
   if (loading) return <div className="loading" role="status">Loading benefits...</div>;
   if (error) return <div className="error" role="alert">{error}</div>;
@@ -71,13 +105,73 @@ function App() {
             <h2>Featured Benefits</h2>
             <a href="#" className="view-all">View all</a>
           </div>
+
+          <div className="categories">
+            <button 
+              className={`category-btn ${selectedCategory === '' ? 'active' : ''}`}
+              onClick={() => setSelectedCategory('')}
+            >
+              Todos
+            </button>
+            {CATEGORIES.map((category) => (
+              <button
+                key={category}
+                className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Buscar por nombre o descripción..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+          </div>
+
           <div className="benefits-grid">
-            {benefits.map((benefit) => (
-              <BenefitCard key={benefit.id} benefit={benefit} />
+            {filteredBenefits.map((benefit) => (
+              <div 
+                key={benefit.id} 
+                className="benefit-card"
+                onClick={() => setSelectedBenefit(benefit)}
+              >
+                <div className="benefit-badge">
+                  {benefit.name.charAt(0)}
+                </div>
+                <div className="benefit-info">
+                  <h3>{benefit.name}</h3>
+                  <p className="category">{benefit.category}</p>
+                </div>
+              </div>
             ))}
           </div>
         </section>
       </main>
+
+      {/* Modal */}
+      {selectedBenefit && (
+        <div className="modal-overlay" onClick={() => setSelectedBenefit(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedBenefit(null)}>×</button>
+            <div className="modal-header">
+              <div className="benefit-badge large">
+                {selectedBenefit.name.charAt(0)}
+              </div>
+              <h2>{selectedBenefit.name}</h2>
+              <p className="category">{selectedBenefit.category}</p>
+            </div>
+            <div className="modal-body">
+              <p>{selectedBenefit.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
