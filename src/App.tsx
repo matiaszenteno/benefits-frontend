@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { Benefit, mockBenefits } from './types/benefit'
 import BenefitCard from './components/BenefitCard'
-
-// Configuración de la API
-const API_URL = import.meta.env.VITE_API_URL || 'https://tu-api-id.execute-api.region.amazonaws.com/dev/benefits';
+import { getBenefits } from './services/api'
 
 function App() {
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -13,30 +11,19 @@ function App() {
 
   useEffect(() => {
     const fetchBenefits = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        if (import.meta.env.DEV) {
-          setBenefits(mockBenefits);
-          return;
-        }
-
-        try {
-          const response = await fetch(API_URL);
-          if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${response.statusText}`);
-          }
-          const data = await response.json();
-          setBenefits(data);
-        } catch (apiError) {
-          console.warn('API fetch failed, using mock data:', apiError);
-          setBenefits(mockBenefits);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching benefits');
+        const data = await getBenefits();
+        setBenefits(data);
+      } catch (apiError) {
+        console.warn('API fetch failed, using mock data:', apiError);
+        setBenefits(mockBenefits);
+        setError('No se pudo conectar a la API. Mostrando datos de ejemplo.');
       } finally {
         setLoading(false);
       }
     };
-
     fetchBenefits();
   }, []);
 
