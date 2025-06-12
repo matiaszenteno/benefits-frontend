@@ -19,7 +19,7 @@ export const BenefitsSearch = () => {
   const [keywords, setKeywords] = useState('');
   const [filters, setFilters] = useState<Record<string, any>>({ category: '' });
   const [isSearchingAI, setIsSearchingAI] = useState(false);
-  const { benefits, loading, error, search } = useBenefits();
+  const { benefits, error, search } = useBenefits();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalBenefit, setModalBenefit] = useState<Benefit | null>(null);
   const [filteredBenefits, setFilteredBenefits] = useState<Benefit[]>([]);
@@ -36,7 +36,7 @@ export const BenefitsSearch = () => {
       const keywordsLower = keywords.toLowerCase();
       setFilteredBenefits(
         benefits.filter(benefit => 
-          benefit.title?.toLowerCase().includes(keywordsLower) || 
+          benefit.name?.toLowerCase().includes(keywordsLower) || 
           benefit.description?.toLowerCase().includes(keywordsLower)
         )
       );
@@ -158,7 +158,7 @@ export const BenefitsSearch = () => {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={closeModal}>×</button>
-            <h2>{modalBenefit.title}</h2>
+            <h2>{modalBenefit.name}</h2>
             <p>{modalBenefit.description}</p>
           </div>
         </div>

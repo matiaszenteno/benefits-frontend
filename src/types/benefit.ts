@@ -1,6 +1,6 @@
 export interface Benefit {
   id: string;
-  title: string;
+  name: string;
   description: string;
   bank: string;
   category: string;
@@ -15,7 +15,7 @@ export interface Benefit {
 export const mockBenefits: Benefit[] = [
   {
     id: "1",
-    title: "Seguro Médico",
+    name: "Seguro Médico",
     description: "Cobertura médica completa para el empleado y su familia",
     bank: "Banco de la ciudad",
     category: "Salud",
@@ -27,7 +27,7 @@ export const mockBenefits: Benefit[] = [
   },
   {
     id: "2",
-    title: "Vale de Despensa",
+    name: "Vale de Despensa",
     description: "Vale mensual para gastos de despensa",
     bank: "Banco de la ciudad",
     category: "Finanzas",
@@ -40,7 +40,7 @@ export const mockBenefits: Benefit[] = [
   },
   {
     id: "3",
-    title: "Gimnasio",
+    name: "Gimnasio",
     description: "Membresía anual en gimnasio de la ciudad",
     bank: "Banco de la ciudad",
     category: "Deporte",
@@ -53,7 +53,7 @@ export const mockBenefits: Benefit[] = [
   },
   {
     id: "4",
-    title: "Día de Cumpleaños",
+    name: "Día de Cumpleaños",
     description: "Día libre en tu cumpleaños",
     bank: "Banco de la ciudad",
     category: "Personal",
@@ -66,7 +66,7 @@ export const mockBenefits: Benefit[] = [
   },
   {
     id: "5",
-    title: "Home Office",
+    name: "Home Office",
     description: "Flexibilidad para trabajar desde casa",
     bank: "Banco de la ciudad",
     category: "Trabajo",
