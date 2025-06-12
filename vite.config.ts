@@ -3,5 +3,8 @@ import react from '@vitejs/plugin-react'
  
 export default defineConfig({
   plugins: [react()],
-  base: '/benefits-frontend/'
+  base: '/benefits-frontend/',
+  build: {
+    outDir: 'docs'
+  }
 }) 
