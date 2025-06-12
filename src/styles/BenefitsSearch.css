@@ -4,154 +4,322 @@
   padding: 2rem;
 }
 
-.search-container {
+/* Barra AI verde */
+.ai-assistant-light {
+  background: linear-gradient(90deg, #11998e 0%, #119987 0%);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+.ai-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.ai-star {
+  margin-right: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.ai-title {
+  font-weight: 700;
+}
+
+.assistant-description-light {
+  color: #e0f7ef;
+  margin-bottom: 1.2rem;
+  font-size: 1.05rem;
+}
+
+.search-container-light {
+  display: flex;
+  gap: 0.5rem;
   align-items: center;
 }
 
-.search-input-container {
-  display: flex;
+.search-input-light {
   flex: 1;
-  position: relative;
-  max-width: 600px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.75rem 3rem 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  padding: 0.9rem 1.2rem;
+  border: none;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  color: #222;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #3b82f6;
+.search-input-light:focus {
+  outline: 0px solid #acacac;
 }
 
-.search-button {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  padding: 0 1rem;
-  background: none;
+.search-input-light::placeholder {
+  color: #666;
+}
+
+.search-button-light {
+  background: #11998e;
+  color: #fff;
   border: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #64748b;
-  transition: color 0.2s;
+  transition: background 0.2s;
 }
 
-.search-button:hover {
-  color: #3b82f6;
+.search-button-light:hover {
+  background: #0c786a;
 }
 
-.search-button:disabled {
-  color: #93c5fd;
+.search-button-light:disabled {
+  background: #7dd3d8;
   cursor: not-allowed;
 }
 
-.ai-toggle {
+/* Subtle search button for AI bar */
+.search-button-subtle {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-button-subtle:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.search-button-subtle:disabled {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+  cursor: not-allowed;
+}
+
+/* Featured Benefits Header */
+.featured-benefits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.featured-benefits-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.view-all-link {
+  color: #11998e;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.view-all-link:hover {
+  text-decoration: underline;
+}
+
+/* Tabs de categorías */
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.category-tab {
+  background: #fff;
+  color: #333;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.category-tab.active, .category-tab:hover {
+  background: #11998e;
+  color: #fff;
+  border-color: #11998e;
+}
+
+/* Keyword search */
+.keyword-search-container {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.keyword-search-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.keyword-search-input:focus {
+  outline: none;
+  border-color: #11998e;
+}
+
+/* Grid de beneficios - ahora 3 por fila */
+.benefits-grid-light {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Cards de beneficios */
+.benefit-card-light {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 0.7rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s;
+  min-width: 0;
+  word-wrap: break-word;
+  cursor: pointer;
+  height: 100%;
+}
+
+.benefit-card-light:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.benefit-badge-light {
+  width: 36px;
+  height: 36px;
+  background: #e0f7ef;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  white-space: nowrap;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #11998e;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
-.user-interest {
-  margin-bottom: 1.5rem;
-  max-width: 600px;
+.benefit-info-light {
+  flex: 1;
+  min-width: 0;
 }
 
-.interest-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
+.benefit-info-light h3 {
+  margin: 0 0 0rem 0;
+  color: #222;
+  font-size: 0.9rem;
+  font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.interest-input:focus {
-  outline: none;
-  border-color: #3b82f6;
+.category-light {
+  color: #11998e;
+  font-size: 0.8rem;
+  margin-bottom: 0.1rem;
+  font-weight: 400;
+  margin-top: 0;
 }
 
-.filters {
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
-
-.filter-select {
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  min-width: 200px;
-  background-color: white;
-}
-
-.error-message {
-  padding: 1rem;
-  background-color: #fee2e2;
-  color: #dc2626;
-  border-radius: 8px;
-  margin: 1rem 0;
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-.benefit-card {
-  background-color: white;
-  border: 1px solid #e2e8f0;
+.modal-content {
+  background: #fff;
   border-radius: 12px;
-  padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  max-width: 400px;
+  width: 90vw;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  position: relative;
 }
-
-.benefit-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.7rem;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #11998e;
+  cursor: pointer;
 }
-
-.benefit-card h3 {
-  margin: 0 0 0.5rem 0;
-  color: #1e293b;
-  font-size: 1.25rem;
+.modal-content h2 {
+  margin-top: 0;
+  color: #11998e;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
-
-.benefit-card p {
-  margin: 0 0 1rem 0;
-  color: #64748b;
+.modal-content p {
+  color: #444;
   font-size: 1rem;
-  line-height: 1.5;
-}
-
-.benefit-details {
-  display: flex;
-  gap: 1rem;
   margin-top: 1rem;
+  word-break: break-word;
 }
 
-.benefit-details span {
-  padding: 0.25rem 0.75rem;
-  background-color: #f1f5f9;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  color: #64748b;
+/* Error message */
+.error-message-light {
+  background: #ffeded;
+  color: #b91c1c;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  border: 1px solid #fca5a5;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .benefits-grid-light {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .benefits-search {
+    padding: 1rem;
+  }
+  .ai-assistant-light {
+    padding: 1.5rem;
+  }
+  .category-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .benefits-grid-light {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .benefit-card-light {
+    padding: 1rem;
+  }
+  .modal-content {
+    padding: 1.2rem 0.7rem 0.7rem 0.7rem;
+  }
 } 

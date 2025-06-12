@@ -6,12 +6,7 @@ interface UseBenefitsReturn {
   benefits: Benefit[];
   loading: boolean;
   error: string | null;
-  search: (
-    query: string,
-    filters: Record<string, any> = {},
-    useAI: boolean = false,
-    userInterest?: string
-  ) => Promise<void>;
+  search: (query: string, filters?: { category?: string }, useAI?: boolean) => Promise<void>;
 }
 
 export const useBenefits = (): UseBenefitsReturn => {
@@ -21,21 +16,15 @@ export const useBenefits = (): UseBenefitsReturn => {
 
   const search = async (
     query: string,
-    filters: Record<string, any> = {},
-    useAI: boolean = false,
-    userInterest?: string
+    filters: { category?: string } = {},
+    useAI: boolean = false
   ) => {
     try {
       setLoading(true);
       setError(null);
-
-      let results: Benefit[];
-      if (useAI) {
-        results = await searchBenefitsAI(query, filters, userInterest);
-      } else {
-        results = await getFilteredBenefits(filters);
-      }
-
+      const results = useAI 
+        ? await searchBenefitsAI(query, filters)
+        : await getFilteredBenefits(filters);
       setBenefits(results);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -44,10 +33,5 @@ export const useBenefits = (): UseBenefitsReturn => {
     }
   };
 
-  return {
-    benefits,
-    loading,
-    error,
-    search
-  };
+  return { benefits, loading, error, search };
 }; 
