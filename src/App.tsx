@@ -70,9 +70,6 @@ function App() {
         <h1>BenefitFinder</h1>
         <nav className="nav" aria-label="Main navigation">
           <a href="#" className="nav-link" aria-current="page">Home</a>
-          <a href="#" className="nav-link">Search</a>
-          <a href="#" className="nav-link">Affiliations</a>
-          <a href="#" className="nav-link">Profile</a>
         </nav>
       </header>
 

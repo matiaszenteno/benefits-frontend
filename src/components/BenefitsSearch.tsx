@@ -25,6 +25,12 @@ export const BenefitsSearch = () => {
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({
       ...prev,
@@ -40,6 +46,7 @@ export const BenefitsSearch = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
             placeholder="Buscar beneficios..."
             className="search-input"
           />
@@ -48,7 +55,7 @@ export const BenefitsSearch = () => {
             disabled={loading}
             className="search-button"
           >
-            {loading ? '🔍 Buscando...' : '🔍 Buscar'}
+            {loading ? '🔍' : '🔍'}
           </button>
         </div>
 
@@ -68,6 +75,7 @@ export const BenefitsSearch = () => {
             type="text"
             value={userInterest}
             onChange={(e) => setUserInterest(e.target.value)}
+            onKeyPress={handleKeyPress}
             placeholder="¿Qué te interesa? (ej: viajes, tecnología, etc.)"
             className="interest-input"
           />
