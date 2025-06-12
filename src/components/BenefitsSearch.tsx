@@ -16,12 +16,12 @@ export const BenefitsSearch = () => {
   }, []);
 
   const handleSearch = async () => {
-    if (query.trim()) {
-      // Si hay texto de búsqueda, usar AI
+    if (query.trim() && useAI) {
+      // Si hay texto de búsqueda y AI está activado
       await search(query, filters, true, userInterest);
     } else {
-      // Si no hay texto, usar filtros tradicionales
-      await search('', filters, false);
+      // Si no hay texto o AI no está activado, usar filtros tradicionales
+      await search(query, filters, false);
     }
   };
 
@@ -35,13 +35,22 @@ export const BenefitsSearch = () => {
   return (
     <div className="benefits-search">
       <div className="search-container">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar beneficios..."
-          className="search-input"
-        />
+        <div className="search-input-container">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar beneficios..."
+            className="search-input"
+          />
+          <button 
+            onClick={handleSearch} 
+            disabled={loading}
+            className="search-button"
+          >
+            {loading ? '🔍 Buscando...' : '🔍 Buscar'}
+          </button>
+        </div>
 
         <label className="ai-toggle">
           <input
@@ -87,14 +96,6 @@ export const BenefitsSearch = () => {
           {/* Agregar más categorías aquí */}
         </select>
       </div>
-
-      <button 
-        onClick={handleSearch} 
-        disabled={loading}
-        className="search-button"
-      >
-        {loading ? 'Buscando...' : 'Buscar'}
-      </button>
 
       {error && (
         <div className="error-message">
