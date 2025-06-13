@@ -6,6 +6,8 @@ const AI_SEARCH_URL = 'https://rt2ntcj19l.execute-api.us-east-1.amazonaws.com/pr
 
 interface FilterParams {
   category?: string;
+  location?: string;
+  affiliation?: string;
 }
 
 // Para filtros tradicionales
@@ -18,7 +20,11 @@ export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<B
 
     const response = await fetch(`${API_URL}/benefits?${queryParams}`);
     if (!response.ok) throw new Error('Error al obtener beneficios');
-    return await response.json();
+    
+    const benefits = await response.json();
+    
+    // Procesar los beneficios para asegurar que tengan todos los campos necesarios
+    return processBenefits(benefits);
   } catch (error) {
     console.error('Error en filtros tradicionales:', error);
     throw error;
@@ -35,7 +41,11 @@ export const searchBenefitsAI = async (query: string, filters: FilterParams = {}
     });
 
     if (!response.ok) throw new Error('Error en la búsqueda AI');
-    return await response.json();
+    
+    const benefits = await response.json();
+    
+    // Procesar los beneficios para asegurar que tengan todos los campos necesarios
+    return processBenefits(benefits);
   } catch (error) {
     console.error('Error en búsqueda AI:', error);
     throw error;
@@ -44,5 +54,14 @@ export const searchBenefitsAI = async (query: string, filters: FilterParams = {}
 
 export const getBenefits = async (): Promise<Benefit[]> => {
   const response = await axios.get<Benefit[]>(`${API_URL}/benefits`);
-  return response.data;
+  return processBenefits(response.data);
+};
+
+// Función para procesar los beneficios y asegurar que tengan todos los campos necesarios
+const processBenefits = (benefits: any[]): Benefit[] => {
+  return benefits.map(benefit => ({
+    ...benefit,
+    // Asegurar que la ubicación esté definida (o será 'Sin ubicación' en los componentes)
+    location: benefit.location || undefined
+  }));
 }; 

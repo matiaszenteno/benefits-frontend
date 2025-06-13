@@ -1,0 +1,6 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#f0f0ff" />
+  <path d="M160,60 L240,60 L240,140 L160,140 Z" fill="#d9d9ff" />
+  <path d="M185,85 L215,85 L215,115 L185,115 Z" fill="#b3b3ff" />
+  <text x="200" y="170" font-family="Arial" font-size="16" text-anchor="middle" fill="#6b46c1">Imagen no disponible</text>
+</svg> 

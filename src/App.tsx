@@ -1,18 +1,20 @@
 import './App.css'
-import { BenefitsSearch } from './components/BenefitsSearch'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  return (
-    <div className="app-container">
-      <header className="header">
-        <h1>BenefitFinder</h1>
-      </header>
+const queryClient = new QueryClient();
 
-      <main className="main-content">
-        <BenefitsSearch />
-      </main>
-    </div>
-  )
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter basename="">
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  </QueryClientProvider>
+);
 
 export default App 
