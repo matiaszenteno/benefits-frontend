@@ -1,8 +1,6 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { X, MapPin, Building, Tag } from 'lucide-react';
+import { MapPin, Building, Tag } from 'lucide-react';
 
 interface FilterPanelProps {
   filters: {
@@ -29,8 +27,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   setFilters,
   categories,
   locations,
-  affiliations,
-  onClose,
+  affiliations
 }) => {
   const updateFilter = (key: string, value: string) => {
     // Convert placeholder values back to empty strings for our filter logic
@@ -38,50 +35,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     setFilters(prev => ({ ...prev, [key]: actualValue }));
   };
 
-  const clearAllFilters = () => {
-    setFilters({
-      category: '',
-      location: '',
-      affiliation: '',
-      validDay: ''
-    });
-  };
-
-  const activeFiltersCount = Object.values(filters).filter(Boolean).length;
-
   // Convert empty strings to placeholder values for the Select components
   const getSelectValue = (filterValue: string) => filterValue || 'all';
 
   return (
     <div className="mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          {activeFiltersCount > 0 && (
-            <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-              {activeFiltersCount} activos
-            </Badge>
-          )}
-        </div>
-        <div className="flex items-center space-x-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearAllFilters}
-            disabled={activeFiltersCount === 0}
-          >
-            Limpiar todo
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Category Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium flex items-center">
@@ -154,6 +113,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           </Select>
         </div>
       </div>
+      
     </div>
   );
 };
