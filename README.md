@@ -51,15 +51,33 @@ npm run deploy
 5. Selecciona la rama `main` y la carpeta `/docs`
 6. Guarda los cambios
 
+**IMPORTANTE**: La aplicación está configurada para funcionar con el nombre del repositorio `Beneficios`. Si tu repositorio tiene un nombre diferente, debes actualizar:
+
+1. El `base` en `vite.config.ts`: `base: '/tu-nombre-repositorio/'`
+2. El `basename` en `src/App.tsx`: `basename="/tu-nombre-repositorio"`
+3. El enlace en `public/404.html`: `href="/tu-nombre-repositorio/"`
+
 Tu aplicación estará disponible en:
 ```
-https://[tu-usuario].github.io/[nombre-del-repositorio]/
+https://[tu-usuario].github.io/Beneficios/
 ```
 
-Por ejemplo, si tu usuario es `johndoe` y el repositorio se llama `beneficios-app`, la URL será:
+Por ejemplo, si tu usuario es `matiaszenteno`, la URL será:
 ```
-https://johndoe.github.io/beneficios-app/
+https://matiaszenteno.github.io/Beneficios/
 ```
+
+## Solución de problemas comunes
+
+### Error 404 al acceder directamente a rutas
+Si obtienes un error 404 al acceder directamente a rutas como `/benefits` o al hacer refresh, esto es normal en GitHub Pages con SPAs. La aplicación incluye:
+
+- Un archivo `404.html` que redirige automáticamente
+- Script de redirección en `index.html`
+- Configuración correcta del `basename` en React Router
+
+### La aplicación no carga estilos
+Verifica que el `base` en `vite.config.ts` coincida exactamente con el nombre de tu repositorio.
 
 ## Estructura del proyecto
 
