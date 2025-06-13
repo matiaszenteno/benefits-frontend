@@ -62,7 +62,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             </Badge>
           )}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-0">
           <Button
             variant="ghost"
             size="sm"
