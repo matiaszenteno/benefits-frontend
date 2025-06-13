@@ -10,7 +10,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: '/Beneficios/',
+  base: '/benefits-frontend/',
   build: {
     outDir: 'docs'
   }
