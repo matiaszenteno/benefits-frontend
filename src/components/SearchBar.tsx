@@ -48,10 +48,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyPress={handleKeyPress}
-          className={`pl-10 transition-all duration-200 ${
+          className={`pl-10 transition-all duration-500 ${
             isAIMode 
-              ? 'border-purple-300 focus:border-purple-500 focus:ring-purple-500 bg-purple-50/50 placeholder:text-purple-400' 
-              : 'border-violet-200 focus:border-violet-400 focus:ring-violet-400 hover:border-violet-300'
+              ? 'border-purple-300 focus:border-purple-500 focus:ring-0 bg-purple-50/50 placeholder:text-purple-400' 
+              : 'border-violet-200 focus:border-violet-400 focus:ring-0 hover:border-violet-300'
           }`}
         />
       </div>
