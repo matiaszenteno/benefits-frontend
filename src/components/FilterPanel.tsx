@@ -56,7 +56,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-semibold">Filtros</span>
           {activeFiltersCount > 0 && (
             <Badge variant="secondary" className="bg-purple-100 text-purple-800">
               {activeFiltersCount} activos
