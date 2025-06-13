@@ -42,7 +42,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     <div className="mb-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Category Filter */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <label className="text-sm font-medium flex items-center">
             <Tag className="w-4 h-4 mr-2 text-purple-500" />
             Categoría
@@ -66,7 +66,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         </div>
 
         {/* Location Filter */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <label className="text-sm font-medium flex items-center">
             <MapPin className="w-4 h-4 mr-2 text-blue-500" />
             Ubicación
@@ -90,7 +90,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         </div>
 
         {/* Affiliation Filter */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <label className="text-sm font-medium flex items-center">
             <Building className="w-4 h-4 mr-2 text-green-500" />
             Afiliación
