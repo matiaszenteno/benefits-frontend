@@ -1,19 +1,19 @@
 <svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="200" fill="#a3d1f7" />
+  <rect width="400" height="200" fill="#c7defa" />
   
   <!-- Círculos -->
-  <circle cx="50" cy="40" r="20" fill="#4fa7e7" />
-  <circle cx="350" cy="60" r="15" fill="#3a8cd6" />
-  <circle cx="100" cy="150" r="18" fill="#5ba9e9" />
+  <circle cx="50" cy="40" r="20" fill="#8cc2f5" />
+  <circle cx="350" cy="60" r="15" fill="#7bb7f2" />
+  <circle cx="100" cy="150" r="18" fill="#9cc9f8" />
   
   <!-- Triángulos -->
-  <path d="M180,130 L200,80 L220,130 Z" fill="#4098e6" />
-  <path d="M280,150 L310,110 L340,150 Z" fill="#3579c9" />
+  <path d="M180,130 L200,80 L220,130 Z" fill="#88b9f6" />
+  <path d="M280,150 L310,110 L340,150 Z" fill="#6ea4e9" />
   
   <!-- Rectángulos redondeados -->
-  <rect x="20" y="120" width="40" height="25" rx="8" ry="8" fill="#3f8ed8" />
-  <rect x="330" y="100" width="50" height="30" rx="10" ry="10" fill="#2e75be" />
+  <rect x="20" y="120" width="40" height="25" rx="8" ry="8" fill="#7fb1f4" />
+  <rect x="330" y="100" width="50" height="30" rx="10" ry="10" fill="#5a94d9" />
   
   <!-- Elipse -->
-  <ellipse cx="200" cy="100" rx="60" ry="30" fill="#76b4f3" />
+  <ellipse cx="200" cy="100" rx="60" ry="30" fill="#aad0fb" />
 </svg>
