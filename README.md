@@ -15,7 +15,7 @@ Una aplicación web moderna para descubrir y gestionar beneficios exclusivos par
 - React 18
 - TypeScript
 - Vite
-- Tailwind CSS
+- Tailwind CSS v3
 - React Router
 - React Query
 - Radix UI
@@ -35,15 +35,31 @@ npm install
 npm run dev
 ```
 
-## Despliegue
+## Despliegue en GitHub Pages
 
 Para desplegar la aplicación en GitHub Pages:
+
+1. Ejecuta el comando de despliegue:
 
 ```bash
 npm run deploy
 ```
 
-Esto generará los archivos estáticos en la carpeta `docs` que se puede usar para el despliegue.
+2. Sube los cambios a tu repositorio de GitHub
+3. Ve a la configuración de tu repositorio en GitHub
+4. En la sección "Pages", selecciona "Deploy from a branch"
+5. Selecciona la rama `main` y la carpeta `/docs`
+6. Guarda los cambios
+
+Tu aplicación estará disponible en:
+```
+https://[tu-usuario].github.io/[nombre-del-repositorio]/
+```
+
+Por ejemplo, si tu usuario es `johndoe` y el repositorio se llama `beneficios-app`, la URL será:
+```
+https://johndoe.github.io/beneficios-app/
+```
 
 ## Estructura del proyecto
 
@@ -54,6 +70,7 @@ Esto generará los archivos estáticos en la carpeta `docs` que se puede usar pa
 - `src/services`: Servicios para comunicación con APIs
 - `src/types`: Definiciones de tipos de TypeScript
 - `src/lib`: Utilidades y funciones auxiliares
+- `docs/`: Archivos generados para GitHub Pages
 
 ## Licencia
 
