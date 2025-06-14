@@ -89,27 +89,28 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           </Select>
         </div>
 
-        {/* Affiliation Filter */}
+        {/* Provider Filter */}
         <div className="space-y-1">
           <label className="text-sm font-medium flex items-center">
             <Building className="w-4 h-4 mr-2 text-green-500" />
-            Afiliación
+            Proveedor
           </label>
           <Select
             value={getSelectValue(filters.affiliation)}
             onValueChange={(value) => updateFilter('affiliation', value)}
           >
             <SelectTrigger className="border-purple-200 focus:border-purple-400">
-              <SelectValue placeholder="Todas las afiliaciones" />
+              <SelectValue placeholder="Todos los proveedores" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas las afiliaciones</SelectItem>
+              <SelectItem value="all">Todos los proveedores</SelectItem>
               {affiliations.map((affiliation) => (
                 <SelectItem key={affiliation} value={affiliation}>
                   {affiliation}
                 </SelectItem>
               ))}
             </SelectContent>
+            
           </Select>
         </div>
       </div>

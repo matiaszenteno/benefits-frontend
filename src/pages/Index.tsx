@@ -27,19 +27,19 @@ const Index = () => {
     search('', filters, false);
   }, []);
 
-  // Obtener categorías, ubicaciones y afiliaciones únicas de los beneficios
+  // Obtener categorías, ubicaciones y proveedores únicos de los beneficios del backend
   const categories = useMemo(() => 
-    Array.from(new Set(benefits.map(b => b.category))),
+    Array.from(new Set(benefits.map(b => b.category).filter(Boolean))).sort(),
     [benefits]
   );
   
   const locations = useMemo(() => 
-    Array.from(new Set(benefits.filter(b => b.location).map(b => b.location as string))),
+    Array.from(new Set(benefits.filter(b => b.location && b.location.trim() !== '' && b.location !== 'Sin ubicación').map(b => b.location as string))).sort(),
     [benefits]
   );
   
   const affiliations = useMemo(() => 
-    Array.from(new Set(benefits.filter(b => b.affiliation).map(b => b.affiliation as string))),
+    Array.from(new Set(benefits.filter(b => b.provider).map(b => b.provider as string))).sort(),
     [benefits]
   );
   
@@ -51,7 +51,7 @@ const Index = () => {
       return benefits.filter(benefit => {
         const matchesCategory = !filters.category || benefit.category === filters.category;
         const matchesLocation = !filters.location || benefit.location === filters.location;
-        const matchesAffiliation = !filters.affiliation || benefit.affiliation === filters.affiliation;
+        const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
         const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
         return matchesCategory && matchesLocation && matchesAffiliation && matchesDay;
@@ -66,7 +66,7 @@ const Index = () => {
       
       const matchesCategory = !filters.category || benefit.category === filters.category;
       const matchesLocation = !filters.location || benefit.location === filters.location;
-      const matchesAffiliation = !filters.affiliation || benefit.affiliation === filters.affiliation;
+      const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
       const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
       return matchesSearch && matchesCategory && matchesLocation && matchesAffiliation && matchesDay;

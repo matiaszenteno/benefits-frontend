@@ -2,12 +2,13 @@ export interface Benefit {
   id: string;
   name: string;
   description: string;
+  category: string;
+  provider: string;
+  location?: string;
+  image_url?: string;
   fullDescription?: string;
   discount?: string;
-  category: string;
-  location?: string;
   validDays?: string[];
-  provider?: string;
   affiliation?: string;
   imageUrl?: string;
   rating?: number;
