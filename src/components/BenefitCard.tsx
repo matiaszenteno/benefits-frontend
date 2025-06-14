@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from './ui/card';
+import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { MapPin, Building } from 'lucide-react';
 import { Benefit } from '../types/benefit';
@@ -10,51 +10,47 @@ interface BenefitCardProps {
 }
 
 const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, onClick }) => {
-  // Si no hay ubicación, mostrar "Sin ubicación"
   const location = benefit.location || 'Sin ubicación';
+  const color = benefit.color || 'from-purple-200 via-pink-200 to-blue-200';
 
   return (
-    <Card 
-      className="cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-violet-200/50 hover:-translate-y-2 border-violet-100 overflow-hidden group bg-gradient-to-br from-white to-violet-50/30"
+    <Card
+      className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden bg-white"
       onClick={onClick}
     >
-      <div className="relative h-28 overflow-hidden">
+      <div className="relative h-48">
         <img
-          src={benefit.imageUrl || './placeholder.svg'}
+          src={benefit.imageUrl || benefit.image_url || './placeholder.svg'}
           alt={benefit.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute top-2 left-2">
-          <Badge variant="secondary" className="bg-white/95 backdrop-blur-sm text-foreground text-xs font-medium border border-white/50 shadow-sm">
-            {benefit.category}
+        <div className="absolute top-4 right-4">
+          <Badge
+            className={`bg-gradient-to-r ${color} text-gray-900 font-bold px-4 py-2 text-sm shadow-lg border border-white/50`}
+          >
+            {benefit.discount || 'Descuento'} OFF
           </Badge>
         </div>
+        <div className="absolute top-4 left-4">
+          <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1">{benefit.category}</Badge>
+        </div>
       </div>
-
-      <CardContent className="p-3 space-y-2">
-        <h3 className="font-semibold text-sm text-foreground line-clamp-2 group-hover:text-violet-600 transition-colors leading-tight">
+      <div className={`p-6 bg-gradient-to-br ${color} space-y-4`}>
+        <h3 className="font-bold text-xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors">
           {benefit.name}
         </h3>
-        
-        <p className="text-muted-foreground text-xs line-clamp-2 leading-relaxed">
-          {benefit.description}
-        </p>
-
-        <div className="space-y-1 pt-1">
-          <div className="flex items-center text-xs text-muted-foreground">
-            <MapPin className="w-3 h-3 mr-1 text-violet-500 flex-shrink-0" />
-            <span className="truncate">{location}</span>
+        <p className="text-gray-800 text-sm leading-relaxed line-clamp-2">{benefit.description}</p>
+        <div className="flex items-center justify-between text-sm text-gray-700">
+          <div className="flex items-center space-x-2">
+            <MapPin className="w-4 h-4 text-gray-600" />
+            <span className="font-medium">{location}</span>
           </div>
-          
-          {benefit.provider && (
-            <div className="flex items-center text-xs text-muted-foreground">
-              <Building className="w-3 h-3 mr-1 text-fuchsia-500 flex-shrink-0" />
-              <span className="truncate">{benefit.provider}</span>
-            </div>
-          )}
+          <div className="flex items-center space-x-2">
+            <Building className="w-4 h-4 text-gray-600" />
+            <span className="font-medium">{benefit.provider}</span>
+          </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };

@@ -1,19 +1,23 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Filter, Star, Users } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
 import BenefitModal from '../components/BenefitModal';
-import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
 import { Button } from '../components/ui/button';
 import { useBenefits } from '../hooks/useBenefits';
 import { Benefit } from '../types/benefit';
+import HeroCarousel from '../components/HeroCarousel';
 
 const Index = () => {
   const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
   const [isAIMode, setIsAIMode] = useState(false);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{
+    category: string;
+    location: string;
+    affiliation: string;
+    validDay?: string;
+  }>({
     category: '',
     location: '',
     affiliation: '',
@@ -42,8 +46,6 @@ const Index = () => {
     Array.from(new Set(benefits.filter(b => b.provider).map(b => b.provider as string))).sort(),
     [benefits]
   );
-  
-  const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const filteredBenefits = useMemo(() => {
     // En modo AI, no aplicamos filtros de texto hasta que se ejecute la búsqueda AI
@@ -91,65 +93,36 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-blue-300 sticky top-0 z-40 shadow-lg shadow-blue-200/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Star className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
-                Beneficios
-              </h1>
+      {/* Banner + Hero Carousel + Search/Filtros sticky */}
+      <div className="relative">
+        {/* Banner gradiente y carrusel */}
+        <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 pb-8 rounded-b-3xl shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+            <HeroCarousel benefits={benefits.slice(0, 5)} onBenefitClick={setSelectedBenefit} />
+          </div>
+        </div>
+        {/* Barra de búsqueda y filtros sticky */}
+        <div className="sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="-mt-12">
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                isAIMode={isAIMode}
+                onAIModeChange={setIsAIMode}
+                onAISearch={handleAISearch}
+                categories={categories}
+                locations={locations}
+                affiliations={affiliations}
+                filters={filters}
+                setFilters={setFilters}
+              />
             </div>
           </div>
         </div>
-      </header>
-
+      </div>
+      {/* Resto del contenido (beneficios, etc.) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filters Bar */}
-        <div className="mb-8 space-y-4">
-          <SearchBar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            isAIMode={isAIMode}
-            onAIModeChange={setIsAIMode}
-            onAISearch={handleAISearch}
-          />
-
-          <div className="flex justify-between items-center">
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="border-violet-200 hover:border-violet-300 hover:bg-violet-50 transition-all duration-200"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Filtros
-            </Button>
-
-            {/* Benefits Counter */}
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-violet-200">
-              <Users className="w-4 h-4 text-violet-500" />
-              <span className="hidden sm:inline font-medium">{filteredBenefits.length} beneficios disponibles</span>
-              <span className="sm:hidden font-medium">{filteredBenefits.length}</span>
-            </div>
-          </div>
-
-          {/* Filter Panel */}
-          {showFilters && (
-            <FilterPanel
-              filters={filters}
-              setFilters={setFilters}
-              categories={categories}
-              locations={locations}
-              affiliations={affiliations}
-              days={days}
-              onClose={() => setShowFilters(false)}
-            />
-          )}
-        </div>
-
         {/* Loading and Error States */}
         {loading && (
           <div className="text-center py-12">

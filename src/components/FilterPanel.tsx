@@ -39,7 +39,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   const getSelectValue = (filterValue: string) => filterValue || 'all';
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 bg-white/90 shadow-lg rounded-2xl p-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Category Filter */}
         <div className="space-y-1">
@@ -51,7 +51,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             value={getSelectValue(filters.category)}
             onValueChange={(value) => updateFilter('category', value)}
           >
-            <SelectTrigger className="border-purple-200 focus:border-purple-400">
+            <SelectTrigger className="border-0 bg-gradient-to-r from-purple-50 to-pink-50 shadow rounded-xl">
               <SelectValue placeholder="Todas las categorías" />
             </SelectTrigger>
             <SelectContent>
@@ -75,7 +75,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             value={getSelectValue(filters.location)}
             onValueChange={(value) => updateFilter('location', value)}
           >
-            <SelectTrigger className="border-purple-200 focus:border-purple-400">
+            <SelectTrigger className="border-0 bg-gradient-to-r from-blue-50 to-cyan-50 shadow rounded-xl">
               <SelectValue placeholder="Todas las ubicaciones" />
             </SelectTrigger>
             <SelectContent>
@@ -99,7 +99,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             value={getSelectValue(filters.affiliation)}
             onValueChange={(value) => updateFilter('affiliation', value)}
           >
-            <SelectTrigger className="border-purple-200 focus:border-purple-400">
+            <SelectTrigger className="border-0 bg-gradient-to-r from-green-50 to-emerald-50 shadow rounded-xl">
               <SelectValue placeholder="Todos los proveedores" />
             </SelectTrigger>
             <SelectContent>
@@ -110,11 +110,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 </SelectItem>
               ))}
             </SelectContent>
-            
           </Select>
         </div>
       </div>
-      
     </div>
   );
 };

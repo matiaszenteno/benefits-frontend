@@ -17,4 +17,5 @@ export interface Benefit {
   howToRedeem?: string;
   contactInfo?: string;
   created_at?: string;
+  color?: string;
 }
