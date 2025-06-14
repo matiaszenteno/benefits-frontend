@@ -50,34 +50,37 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-3 items-center bg-white/90 shadow-lg rounded-2xl px-6 py-4 mt-0">
+    <div className="flex flex-col lg:flex-row gap-3 items-center w-full max-w-7xl mx-auto">
       {/* Search Bar */}
-      <div className="flex-1 relative w-full">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-        <Input
-          placeholder={isAIMode ? "Describe lo que buscas... ej: 'cena romántica en Las Condes'" : "Buscar por nombre del beneficio..."}
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className={`pl-10 pr-14 h-11 border-0 shadow-lg rounded-xl transition-all text-base ${
-            isAIMode
-              ? "bg-gradient-to-r from-purple-50 to-pink-50 focus:from-purple-100 focus:to-pink-100"
-              : "bg-white/95 backdrop-blur-sm focus:bg-white"
-          }`}
-        />
-        <Button
-          onClick={() => onAIModeChange(!isAIMode)}
-          className={`absolute right-2 top-1/2 transform -translate-y-1/2 h-7 px-2 rounded-lg transition-all ${
-            isAIMode
-              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-md"
-              : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-        </Button>
+      <div className="flex-1 min-w-0 relative w-full max-w-full">
+        <div className="relative flex items-center w-full">
+          <Button
+            onClick={() => onAIModeChange(!isAIMode)}
+            className={`absolute left-2 top-1/2 transform -translate-y-1/2 h-7 px-2 rounded-lg transition-all z-10 ${
+              isAIMode
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-md"
+                : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+            }`}
+            style={{ marginRight: '8px' }}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+          </Button>
+          <Search className="absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+          <Input
+            placeholder={isAIMode ? "Describe lo que buscas... ej: 'cena romántica en Las Condes'" : "Buscar por nombre del beneficio..."}
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className={`pl-16 pr-4 h-11 border-0 shadow-lg rounded-xl transition-all text-base w-full ${
+              isAIMode
+                ? "bg-gradient-to-r from-purple-50 to-pink-50 focus:from-purple-100 focus:to-pink-100"
+                : "bg-white/95 backdrop-blur-sm focus:bg-white"
+            }`}
+          />
+        </div>
       </div>
       {/* Filters */}
-      <div className="flex gap-2 w-full lg:w-auto justify-center">
+      <div className="flex gap-2 w-full lg:w-auto justify-center flex-shrink-0 mt-2 lg:mt-0">
         <Select
           value={filters.category || 'all'}
           onValueChange={(value) => updateFilter('category', value)}

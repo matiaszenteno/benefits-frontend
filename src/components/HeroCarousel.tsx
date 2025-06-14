@@ -12,6 +12,11 @@ interface HeroCarouselProps {
 const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits, onBenefitClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const defaultImages = [
+    'https://assets.bancochile.cl/uploads/000/058/511/e4d4668a-e8bd-4da6-9348-c39f1488cd43/original/banner-web-DO-SUSHI.jpg',
+    'https://assets.bancochile.cl/uploads/000/056/680/e18e3ccc-fb95-4100-aa66-2f42e2b8741a/original/banner-web-Prima-Bar.jpg',
+  ];
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % benefits.length);
@@ -33,39 +38,12 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits, onBenefitClick })
   const color = currentBenefit.color || 'from-purple-400 via-pink-400 to-blue-400';
 
   return (
-    <div className="relative h-72 rounded-3xl overflow-hidden group shadow-2xl">
-      <div className={`absolute inset-0 bg-gradient-to-r ${color} opacity-90`} />
+    <div className="relative h-40 sm:h-72 rounded-3xl overflow-hidden group shadow-2xl">
       <img
-        src={currentBenefit.imageUrl || currentBenefit.image_url || './placeholder.svg'}
+        src={currentBenefit.imageUrl || currentBenefit.image_url || defaultImages[currentIndex % 2]}
         alt={currentBenefit.name}
-        className="absolute inset-0 w-full h-full object-cover mix-blend-overlay"
+        className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="relative h-full p-8 flex items-center justify-between text-white">
-        <div className="flex-1 space-y-4">
-          <div className="flex items-center space-x-3">
-            <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-sm px-3 py-1">
-              {currentBenefit.category}
-            </Badge>
-            <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-sm px-3 py-1">
-              Recomendado
-            </Badge>
-          </div>
-          <div className="space-y-3">
-            <h3 className="text-3xl font-bold leading-tight">{currentBenefit.name}</h3>
-            <p className="text-lg opacity-90 max-w-lg leading-relaxed">{currentBenefit.description}</p>
-          </div>
-          <Button
-            onClick={() => onBenefitClick(currentBenefit)}
-            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border border-white/30 px-6 py-3 rounded-xl font-semibold"
-          >
-            Ver detalles
-          </Button>
-        </div>
-        <div className="text-right">
-          <div className="text-5xl font-bold">{currentBenefit.discount || ''}</div>
-          <div className="text-xl opacity-90">OFF</div>
-        </div>
-      </div>
       {/* Navigation */}
       <Button
         onClick={goToPrevious}
