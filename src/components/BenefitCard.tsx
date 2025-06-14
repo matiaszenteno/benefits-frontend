@@ -7,22 +7,31 @@ import { Benefit } from '../types/benefit';
 interface BenefitCardProps {
   benefit: Benefit;
   onClick: () => void;
+  index: number;
 }
 
-const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, onClick }) => {
+const CARD_GRADIENTS = [
+  'from-purple-100 via-pink-100 to-blue-100',
+  'from-blue-100 via-cyan-100 to-green-100',
+  'from-pink-100 via-yellow-100 to-orange-100',
+  'from-green-100 via-teal-100 to-blue-100',
+  'from-yellow-100 via-pink-100 to-purple-100',
+];
+
+const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, onClick, index }) => {
   const location = benefit.location || 'Sin ubicación';
-  const color = benefit.color || 'from-purple-200 via-pink-200 to-blue-200';
+  const color = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
 
   return (
     <Card
-      className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden bg-white"
+      className={`group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden bg-white bg-gradient-to-br ${color}`}
       onClick={onClick}
     >
       <div className="relative h-48">
         <img
           src={benefit.imageUrl || benefit.image_url || './placeholder.svg'}
           alt={benefit.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 filter grayscale"
         />
         <div className="absolute top-4 right-4">
           <Badge

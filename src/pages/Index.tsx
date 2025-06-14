@@ -93,31 +93,31 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
-      {/* Banner + Hero Carousel + Search/Filtros sticky */}
-      <div className="relative">
-        {/* Banner gradiente y carrusel */}
-        <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 pb-8 rounded-b-3xl shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-            <HeroCarousel benefits={benefits.slice(0, 5)} onBenefitClick={setSelectedBenefit} />
-          </div>
-        </div>
-        {/* Barra de búsqueda y filtros sticky */}
-        <div className="sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="-mt-12">
-              <SearchBar
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                isAIMode={isAIMode}
-                onAIModeChange={setIsAIMode}
-                onAISearch={handleAISearch}
-                categories={categories}
-                locations={locations}
-                affiliations={affiliations}
-                filters={filters}
-                setFilters={setFilters}
-              />
+      {/* Banner principal con gradiente, barra sticky y carrusel */}
+      <div className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 pb-8 rounded-b-3xl shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          {/* Barra de búsqueda sticky dentro del banner */}
+          <div className="sticky top-0 z-30">
+            <div className="flex justify-center">
+              <div className="w-full max-w-4xl">
+                <SearchBar
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  isAIMode={isAIMode}
+                  onAIModeChange={setIsAIMode}
+                  onAISearch={handleAISearch}
+                  categories={categories}
+                  locations={locations}
+                  affiliations={affiliations}
+                  filters={filters}
+                  setFilters={setFilters}
+                />
+              </div>
             </div>
+          </div>
+          {/* Carrusel debajo de la barra sticky */}
+          <div className="mt-8">
+            <HeroCarousel benefits={benefits.slice(0, 5)} onBenefitClick={setSelectedBenefit} />
           </div>
         </div>
       </div>
@@ -156,11 +156,12 @@ const Index = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredBenefits.map((benefit) => (
+                {filteredBenefits.map((benefit, idx) => (
                   <BenefitCard
                     key={benefit.id}
                     benefit={benefit}
                     onClick={() => setSelectedBenefit(benefit)}
+                    index={idx}
                   />
                 ))}
               </div>
