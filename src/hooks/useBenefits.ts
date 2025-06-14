@@ -23,7 +23,7 @@ export const useBenefits = (): UseBenefitsReturn => {
       setLoading(true);
       setError(null);
       const results = useAI 
-        ? await searchBenefitsAI(query, filters)
+        ? await searchBenefitsAI(query)
         : await getFilteredBenefits(filters);
       setBenefits(results);
     } catch (err) {

@@ -31,18 +31,21 @@ export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<B
   }
 };
 
-// Para búsqueda AI
-export const searchBenefitsAI = async (query: string, filters: FilterParams = {}): Promise<Benefit[]> => {
+// Para búsqueda AI - solo acepta query de texto
+export const searchBenefitsAI = async (query: string): Promise<Benefit[]> => {
   try {
     const response = await fetch(AI_SEARCH_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, filters })
+      body: JSON.stringify({ query })
     });
 
     if (!response.ok) throw new Error('Error en la búsqueda AI');
     
-    const benefits = await response.json();
+    const result = await response.json();
+    
+    // La respuesta de la lambda search incluye aiResponse, extraer los beneficios de ahí
+    const benefits = result.aiResponse || [];
     
     // Procesar los beneficios para asegurar que tengan todos los campos necesarios
     return processBenefits(benefits);
