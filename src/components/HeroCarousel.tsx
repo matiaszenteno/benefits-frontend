@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
 import { Benefit } from '../types/benefit';
 
 interface HeroCarouselProps {
@@ -9,7 +8,7 @@ interface HeroCarouselProps {
   onBenefitClick: (benefit: Benefit) => void;
 }
 
-const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits, onBenefitClick }) => {
+const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const defaultImages = [
@@ -35,7 +34,6 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits, onBenefitClick })
   if (benefits.length === 0) return null;
 
   const currentBenefit = benefits[currentIndex];
-  const color = currentBenefit.color || 'from-purple-400 via-pink-400 to-blue-400';
 
   return (
     <div className="relative h-40 sm:h-72 rounded-3xl overflow-hidden group shadow-2xl">
