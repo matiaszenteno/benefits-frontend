@@ -48,8 +48,8 @@ const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
         />
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1">{benefit.category}</Badge>
-          {benefit.merchant_category && benefit.merchant_category !== benefit.category && (
-            <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1 text-xs">{benefit.merchant_category}</Badge>
+          {benefit.merchant_sub_category && benefit.merchant_sub_category !== benefit.category && (
+            <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1 text-xs">{benefit.merchant_sub_category}</Badge>
           )}
         </div>
       </div>

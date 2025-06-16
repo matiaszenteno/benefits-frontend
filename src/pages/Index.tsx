@@ -5,7 +5,7 @@ import SearchBar from '../components/SearchBar';
 import { Button } from '../components/ui/button';
 import { useBenefits } from '../hooks/useBenefits';
 import HeroCarousel from '../components/HeroCarousel';
-import { getCategories, getSubcategories } from '../services/api';
+import { getCategories } from '../services/api';
 
 const ITEMS_PER_PAGE = 36;
 
@@ -14,7 +14,6 @@ const Index = () => {
   const [isAIMode, setIsAIMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState<Array<{id: number, name: string}>>([]);
-  const [subcategories, setSubcategories] = useState<Array<{id: number, name: string, category_id?: number}>>([]);
   const [filters, setFilters] = useState<{
     category: string;
     subcategory: string;
@@ -33,12 +32,8 @@ const Index = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const [categoriesData, subcategoriesData] = await Promise.all([
-          getCategories(),
-          getSubcategories()
-        ]);
+        const categoriesData = await getCategories();
         setCategories(categoriesData);
-        setSubcategories(subcategoriesData);
         
         // Cargar beneficios
         search('', filters, false);
@@ -131,8 +126,8 @@ const Index = () => {
             onAIModeChange={setIsAIMode}
             onAISearch={handleAISearch}
             categories={categories}
-            subcategories={subcategories}
             affiliations={affiliations}
+            benefits={benefits}
             filters={filters}
             setFilters={setFilters}
           />
@@ -158,13 +153,6 @@ const Index = () => {
           </div>
         )}
 
-        {/* Mostrar mensaje cuando no hay beneficios */}
-        {filteredBenefits.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
-          </div>
-        )}
-
         {/* Benefits Grid */}
         {!loading && !error && (
           <>
@@ -180,7 +168,12 @@ const Index = () => {
               )}
             </div>
 
-            {filteredBenefits.length > 0 && (
+            {/* Mostrar mensaje cuando no hay beneficios */}
+            {filteredBenefits.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
+              </div>
+            ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
                   {currentBenefits.map((benefit, idx) => (

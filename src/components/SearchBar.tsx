@@ -9,12 +9,6 @@ interface Category {
   name: string;
 }
 
-interface Subcategory {
-  id: number;
-  name: string;
-  category_id?: number;
-}
-
 interface SearchBarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -22,8 +16,8 @@ interface SearchBarProps {
   onAIModeChange: (enabled: boolean) => void;
   onAISearch: () => void;
   categories: Category[];
-  subcategories: Subcategory[];
   affiliations: string[];
+  benefits: any[];
   filters: {
     category: string;
     subcategory: string;
@@ -45,8 +39,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onAIModeChange,
   onAISearch,
   categories,
-  subcategories,
   affiliations,
+  benefits,
   filters,
   setFilters
 }) => {
@@ -73,10 +67,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   // Filtrar subcategorías basadas en la categoría seleccionada
   const availableSubcategories = filters.category 
-    ? subcategories.filter(sub => {
-        const selectedCategory = categories.find(cat => cat.name === filters.category);
-        return selectedCategory && sub.category_id === selectedCategory.id;
-      })
+    ? Array.from(new Set(
+        benefits
+          .filter(benefit => benefit.category === filters.category && benefit.merchant_sub_category)
+          .map(benefit => benefit.merchant_sub_category)
+      )).sort().map((name, index) => ({ id: index, name }))
     : [];
 
   return (
