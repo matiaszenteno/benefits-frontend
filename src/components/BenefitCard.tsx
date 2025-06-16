@@ -1,12 +1,12 @@
 import React from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { MapPin, Building } from 'lucide-react';
+import { ExternalLink, Building } from 'lucide-react';
+import { Button } from './ui/button';
 import { Benefit } from '../types/benefit';
 
 interface BenefitCardProps {
   benefit: Benefit;
-  onClick: () => void;
   index: number;
 }
 
@@ -23,14 +23,19 @@ const CARD_IMAGES = [
   'https://assets.bancochile.cl/uploads/000/026/819/f634857a-7aa5-4ce0-81aa-31a7ae569dc3/original/Wendys_Sept22-212.jpg',
 ];
 
-const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, onClick, index }) => {
-  const location = benefit.location || 'Sin ubicación';
+const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
   const color = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+
+  const handleVisitBenefit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (benefit.source_url) {
+      window.open(benefit.source_url, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <Card
-      className={`group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden bg-white bg-gradient-to-br ${color} flex flex-col h-full`}
-      onClick={onClick}
+      className={`group transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden bg-white bg-gradient-to-br ${color} flex flex-col h-full`}
     >
       <div className="relative h-48">
         <img
@@ -56,15 +61,21 @@ const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, onClick, index }) =>
           </p>
         </div>
         <div className="flex-1" />
-        <div className="flex items-center justify-between text-sm text-gray-700 border-t border-white/30 mt-2 min-h-[36px] py-1">
-          <div className="flex items-center space-x-2">
-            <MapPin className="w-4 h-4 text-gray-600" />
-            <span className="font-medium">{location}</span>
-          </div>
+        <div className="flex items-center justify-between text-sm text-gray-700 border-t border-white/30 mt-2 min-h-[36px] py-2">
           <div className="flex items-center space-x-2">
             <Building className="w-4 h-4 text-gray-600" />
             <span className="font-medium">{benefit.provider}</span>
           </div>
+          {benefit.source_url && (
+            <Button
+              onClick={handleVisitBenefit}
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 h-7"
+            >
+              <ExternalLink className="w-3 h-3 mr-1" />
+              Visitar beneficio
+            </Button>
+          )}
         </div>
       </div>
     </Card>

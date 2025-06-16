@@ -7,6 +7,7 @@ export interface Benefit {
   provider: string;
   location?: string;
   image_url?: string;
+  source_url?: string;
   fullDescription?: string;
   discount?: string;
   validDays?: string[];

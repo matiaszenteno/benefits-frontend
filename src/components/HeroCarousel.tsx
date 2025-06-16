@@ -5,7 +5,6 @@ import { Benefit } from '../types/benefit';
 
 interface HeroCarouselProps {
   benefits: Benefit[];
-  onBenefitClick: (benefit: Benefit) => void;
 }
 
 const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
@@ -17,6 +16,8 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
   ];
 
   useEffect(() => {
+    if (benefits.length === 0) return;
+    
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % benefits.length);
     }, 5000);

@@ -1,47 +1,56 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Filter } from 'lucide-react';
+import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
-import BenefitModal from '../components/BenefitModal';
 import SearchBar from '../components/SearchBar';
 import { Button } from '../components/ui/button';
 import { useBenefits } from '../hooks/useBenefits';
-import { Benefit } from '../types/benefit';
 import HeroCarousel from '../components/HeroCarousel';
+import { getCategories, getSubcategories } from '../services/api';
+
+const ITEMS_PER_PAGE = 36;
 
 const Index = () => {
-  const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAIMode, setIsAIMode] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [categories, setCategories] = useState<Array<{id: number, name: string}>>([]);
+  const [subcategories, setSubcategories] = useState<Array<{id: number, name: string, category_id?: number}>>([]);
   const [filters, setFilters] = useState<{
     category: string;
-    location: string;
+    subcategory: string;
     affiliation: string;
     validDay?: string;
   }>({
     category: '',
-    location: '',
+    subcategory: '',
     affiliation: '',
     validDay: ''
   });
 
   const { benefits, loading, error, search } = useBenefits();
   
-  // Cargar beneficios al inicio
+  // Cargar datos iniciales
   useEffect(() => {
-    search('', filters, false);
+    const loadInitialData = async () => {
+      try {
+        const [categoriesData, subcategoriesData] = await Promise.all([
+          getCategories(),
+          getSubcategories()
+        ]);
+        setCategories(categoriesData);
+        setSubcategories(subcategoriesData);
+        
+        // Cargar beneficios
+        search('', filters, false);
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+      }
+    };
+    
+    loadInitialData();
   }, []);
 
-  // Obtener categorías, ubicaciones y proveedores únicos de los beneficios del backend
-  const categories = useMemo(() => 
-    Array.from(new Set(benefits.map(b => b.category).filter(Boolean))).sort(),
-    [benefits]
-  );
-  
-  const locations = useMemo(() => 
-    Array.from(new Set(benefits.filter(b => b.location && b.location.trim() !== '' && b.location !== 'Sin ubicación').map(b => b.location as string))).sort(),
-    [benefits]
-  );
-  
+  // Obtener proveedores únicos de los beneficios del backend
   const affiliations = useMemo(() => 
     Array.from(new Set(benefits.filter(b => b.provider).map(b => b.provider as string))).sort(),
     [benefits]
@@ -52,11 +61,11 @@ const Index = () => {
     if (isAIMode) {
       return benefits.filter(benefit => {
         const matchesCategory = !filters.category || benefit.category === filters.category;
-        const matchesLocation = !filters.location || benefit.location === filters.location;
+        const matchesSubcategory = !filters.subcategory || benefit.merchant_category === filters.subcategory;
         const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
         const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
-        return matchesCategory && matchesLocation && matchesAffiliation && matchesDay;
+        return matchesCategory && matchesSubcategory && matchesAffiliation && matchesDay;
       });
     }
 
@@ -67,28 +76,45 @@ const Index = () => {
                           benefit.category.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCategory = !filters.category || benefit.category === filters.category;
-      const matchesLocation = !filters.location || benefit.location === filters.location;
+      const matchesSubcategory = !filters.subcategory || benefit.merchant_category === filters.subcategory;
       const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
       const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
-      return matchesSearch && matchesCategory && matchesLocation && matchesAffiliation && matchesDay;
+      return matchesSearch && matchesCategory && matchesSubcategory && matchesAffiliation && matchesDay;
     });
   }, [searchTerm, filters, isAIMode, benefits]);
+
+  // Paginación
+  const totalPages = Math.ceil(filteredBenefits.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentBenefits = filteredBenefits.slice(startIndex, endIndex);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters, isAIMode]);
 
   const clearFilters = () => {
     setFilters({
       category: '',
-      location: '',
+      subcategory: '',
       affiliation: '',
       validDay: ''
     });
     setSearchTerm('');
+    setCurrentPage(1);
   };
 
   const handleAISearch = () => {
     if (searchTerm.trim()) {
       search(searchTerm, filters, true);
     }
+  };
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -105,13 +131,13 @@ const Index = () => {
             onAIModeChange={setIsAIMode}
             onAISearch={handleAISearch}
             categories={categories}
-            locations={locations}
+            subcategories={subcategories}
             affiliations={affiliations}
             filters={filters}
             setFilters={setFilters}
           />
           <div className="mt-6">
-            <HeroCarousel benefits={benefits.slice(0, 5)} onBenefitClick={setSelectedBenefit} />
+            <HeroCarousel benefits={benefits.slice(0, 5)} />
           </div>
         </div>
       </div>
@@ -135,6 +161,18 @@ const Index = () => {
         {/* Benefits Grid */}
         {!loading && !error && (
           <>
+            {/* Results info */}
+            <div className="mb-6 flex justify-between items-center">
+              <p className="text-gray-600">
+                Mostrando {startIndex + 1}-{Math.min(endIndex, filteredBenefits.length)} de {filteredBenefits.length} beneficios
+              </p>
+              {(searchTerm || filters.category || filters.subcategory || filters.affiliation) && (
+                <Button variant="outline" onClick={clearFilters} size="sm">
+                  Limpiar filtros
+                </Button>
+              )}
+            </div>
+
             {filteredBenefits.length === 0 ? (
               <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-xl border border-violet-100">
                 <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -149,29 +187,73 @@ const Index = () => {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {filteredBenefits.map((benefit, idx) => (
-                  <BenefitCard
-                    key={benefit.id}
-                    benefit={benefit}
-                    onClick={() => setSelectedBenefit(benefit)}
-                    index={idx}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                  {currentBenefits.map((benefit, idx) => (
+                    <BenefitCard
+                      key={benefit.id}
+                      benefit={benefit}
+                      index={idx}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Anterior
+                    </Button>
+                    
+                    <div className="flex space-x-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={currentPage === pageNum ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => goToPage(pageNum)}
+                            className="w-10"
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Siguiente
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
       </div>
-
-      {/* Benefit Modal */}
-      {selectedBenefit && (
-        <BenefitModal
-          benefit={selectedBenefit}
-          isOpen={!!selectedBenefit}
-          onClose={() => setSelectedBenefit(null)}
-        />
-      )}
     </div>
   );
 };

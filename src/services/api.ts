@@ -8,14 +8,33 @@ interface FilterParams {
   category?: string;
   location?: string;
   affiliation?: string;
+  page?: number;
+  limit?: number;
 }
 
-// Para filtros tradicionales
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Subcategory {
+  id: number;
+  name: string;
+  category_id?: number;
+}
+
+// Para filtros tradicionales con paginación
 export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<Benefit[]> => {
   try {
     const queryParams = new URLSearchParams();
     if (filters.category) {
       queryParams.append('category', filters.category);
+    }
+    if (filters.page) {
+      queryParams.append('page', filters.page.toString());
+    }
+    if (filters.limit) {
+      queryParams.append('limit', filters.limit.toString());
     }
 
     const response = await fetch(`${API_URL}/benefits?${queryParams}`);
@@ -60,6 +79,30 @@ export const getBenefits = async (): Promise<Benefit[]> => {
   return processBenefits(response.data);
 };
 
+// Obtener categorías
+export const getCategories = async (): Promise<Category[]> => {
+  try {
+    const response = await fetch(`${API_URL}/api/categories`);
+    if (!response.ok) throw new Error('Error al obtener categorías');
+    return await response.json();
+  } catch (error) {
+    console.error('Error al obtener categorías:', error);
+    throw error;
+  }
+};
+
+// Obtener subcategorías
+export const getSubcategories = async (): Promise<Subcategory[]> => {
+  try {
+    const response = await fetch(`${API_URL}/api/subcategories`);
+    if (!response.ok) throw new Error('Error al obtener subcategorías');
+    return await response.json();
+  } catch (error) {
+    console.error('Error al obtener subcategorías:', error);
+    throw error;
+  }
+};
+
 // Función para procesar los beneficios y asegurar que tengan todos los campos necesarios
 const processBenefits = (benefits: any[]): Benefit[] => {
   return benefits
@@ -68,11 +111,11 @@ const processBenefits = (benefits: any[]): Benefit[] => {
       ...benefit,
       id: benefit.id?.toString() || '',
       category: benefit.merchant_category || benefit.category || 'Sin categoría',
+      name: benefit.merchant_name || benefit.name || '', // Usar nombre del merchant
       // Mantener compatibilidad con campos existentes
       imageUrl: benefit.image_url || benefit.imageUrl,
       fullDescription: benefit.description,
       // Asegurar que todos los campos requeridos estén presentes
-      name: benefit.name || '',
       description: benefit.description || '',
       provider: benefit.provider || '',
     }));

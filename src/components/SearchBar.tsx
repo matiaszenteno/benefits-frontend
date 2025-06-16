@@ -4,24 +4,35 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Subcategory {
+  id: number;
+  name: string;
+  category_id?: number;
+}
+
 interface SearchBarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   isAIMode: boolean;
   onAIModeChange: (enabled: boolean) => void;
   onAISearch: () => void;
-  categories: string[];
-  locations: string[];
+  categories: Category[];
+  subcategories: Subcategory[];
   affiliations: string[];
   filters: {
     category: string;
-    location: string;
+    subcategory: string;
     affiliation: string;
     validDay?: string;
   };
   setFilters: React.Dispatch<React.SetStateAction<{
     category: string;
-    location: string;
+    subcategory: string;
     affiliation: string;
     validDay?: string;
   }>>;
@@ -34,7 +45,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onAIModeChange,
   onAISearch,
   categories,
-  locations,
+  subcategories,
   affiliations,
   filters,
   setFilters
@@ -46,8 +57,27 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const updateFilter = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value === 'all' ? '' : value }));
+    const newValue = value === 'all' ? '' : value;
+    
+    // Si se cambia la categoría, resetear subcategoría
+    if (key === 'category') {
+      setFilters(prev => ({ 
+        ...prev, 
+        [key]: newValue,
+        subcategory: '' // Reset subcategory when category changes
+      }));
+    } else {
+      setFilters(prev => ({ ...prev, [key]: newValue }));
+    }
   };
+
+  // Filtrar subcategorías basadas en la categoría seleccionada
+  const availableSubcategories = filters.category 
+    ? subcategories.filter(sub => {
+        const selectedCategory = categories.find(cat => cat.name === filters.category);
+        return selectedCategory && sub.category_id === selectedCategory.id;
+      })
+    : [];
 
   return (
     <div className="flex flex-col lg:flex-row gap-3 items-center w-full max-w-7xl mx-auto">
@@ -86,42 +116,47 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onValueChange={(value) => updateFilter('category', value)}
         >
           <SelectTrigger className="w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
-            <SelectValue placeholder="Categoría" />
+            <SelectValue placeholder="Seleccionar categoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
+            <SelectItem value="all">Todas las categorías</SelectItem>
             {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
+              <SelectItem key={category.id} value={category.name}>
+                {category.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        
         <Select
-          value={filters.location || 'all'}
-          onValueChange={(value) => updateFilter('location', value)}
+          value={filters.subcategory || 'all'}
+          onValueChange={(value) => updateFilter('subcategory', value)}
+          disabled={!filters.category}
         >
-          <SelectTrigger className="w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
-            <SelectValue placeholder="Ubicación" />
+          <SelectTrigger className={`w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm ${
+            !filters.category ? 'opacity-50 cursor-not-allowed' : ''
+          }`}>
+            <SelectValue placeholder="Seleccionar subcategoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
-            {locations.map((location) => (
-              <SelectItem key={location} value={location}>
-                {location}
+            <SelectItem value="all">Todas las subcategorías</SelectItem>
+            {availableSubcategories.map((subcategory) => (
+              <SelectItem key={subcategory.id} value={subcategory.name}>
+                {subcategory.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        
         <Select
           value={filters.affiliation || 'all'}
           onValueChange={(value) => updateFilter('affiliation', value)}
         >
           <SelectTrigger className="w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
-            <SelectValue placeholder="Afiliación" />
+            <SelectValue placeholder="Seleccionar afiliación" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
+            <SelectItem value="all">Todas las afiliaciones</SelectItem>
             {affiliations.map((aff) => (
               <SelectItem key={aff} value={aff}>
                 {aff}
