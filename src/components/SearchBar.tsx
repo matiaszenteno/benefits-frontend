@@ -115,11 +115,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
           value={filters.category || 'all'}
           onValueChange={(value) => updateFilter('category', value)}
         >
-          <SelectTrigger className="w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
+          <SelectTrigger className="w-44 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
             <SelectValue placeholder="Seleccionar categoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas las categorías</SelectItem>
+            <SelectItem value="all">Categorías</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.name}>
                 {category.name}
@@ -133,13 +133,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onValueChange={(value) => updateFilter('subcategory', value)}
           disabled={!filters.category}
         >
-          <SelectTrigger className={`w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm ${
+          <SelectTrigger className={`w-44 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm ${
             !filters.category ? 'opacity-50 cursor-not-allowed' : ''
           }`}>
             <SelectValue placeholder="Seleccionar subcategoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas las subcategorías</SelectItem>
+            <SelectItem value="all">Subcategoría</SelectItem>
             {availableSubcategories.map((subcategory) => (
               <SelectItem key={subcategory.id} value={subcategory.name}>
                 {subcategory.name}
@@ -152,11 +152,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
           value={filters.affiliation || 'all'}
           onValueChange={(value) => updateFilter('affiliation', value)}
         >
-          <SelectTrigger className="w-36 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
+          <SelectTrigger className="w-44 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
             <SelectValue placeholder="Seleccionar afiliación" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas las afiliaciones</SelectItem>
+            <SelectItem value="all">Afiliación</SelectItem>
             {affiliations.map((aff) => (
               <SelectItem key={aff} value={aff}>
                 {aff}

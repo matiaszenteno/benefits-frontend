@@ -2,7 +2,6 @@ import React from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { ExternalLink, Building } from 'lucide-react';
-import { Button } from './ui/button';
 import { Benefit } from '../types/benefit';
 
 interface BenefitCardProps {
@@ -47,16 +46,19 @@ const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
           alt={benefit.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-4 left-4 flex flex-col gap-2">
           <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1">{benefit.category}</Badge>
+          {benefit.merchant_category && benefit.merchant_category !== benefit.category && (
+            <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1 text-xs">{benefit.merchant_category}</Badge>
+          )}
         </div>
       </div>
       <div className="flex flex-col flex-1 p-4 bg-transparent">
-        <div className="flex flex-col" style={{ minHeight: '120px' }}>
+        <div className="flex flex-col" style={{ minHeight: '90px' }}>
           <h3 className="font-bold text-xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors line-clamp-3 mb-2">
             {benefit.name}
           </h3>
-          <p className="text-gray-800 text-sm leading-relaxed line-clamp-3 mb-2">
+          <p className="text-gray-800 text-sm leading-relaxed line-clamp-2 mb-2">
             {benefit.description}
           </p>
         </div>
@@ -67,14 +69,13 @@ const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
             <span className="font-medium">{benefit.provider}</span>
           </div>
           {benefit.source_url && (
-            <Button
+            <button
               onClick={handleVisitBenefit}
-              size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 h-7"
+              className="text-gray-700 hover:text-gray-900 text-xs font-medium underline decoration-1 underline-offset-2 flex items-center space-x-1 transition-colors"
             >
-              <ExternalLink className="w-3 h-3 mr-1" />
-              Visitar beneficio
-            </Button>
+              <ExternalLink className="w-3 h-3" />
+              <span>Visitar beneficio</span>
+            </button>
           )}
         </div>
       </div>
