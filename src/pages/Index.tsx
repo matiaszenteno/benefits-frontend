@@ -162,12 +162,12 @@ const Index = () => {
         {!loading && !error && (
           <>
             {/* Results info */}
-            <div className="mb-6 flex justify-between items-center bg-white/50 backdrop-blur-sm rounded-xl border border-violet-100 px-6 py-4">
-              <p className="text-gray-700 font-medium">
-                Mostrando <span className="font-bold text-purple-600">{startIndex + 1}-{Math.min(endIndex, filteredBenefits.length)}</span> de <span className="font-bold text-purple-600">{filteredBenefits.length}</span> beneficios
+            <div className="mb-4 flex justify-between items-center">
+              <p className="text-gray-600 text-sm">
+                Mostrando {startIndex + 1}-{Math.min(endIndex, filteredBenefits.length)} de {filteredBenefits.length} beneficios
               </p>
               {(searchTerm || filters.category || filters.subcategory || filters.affiliation) && (
-                <Button variant="outline" onClick={clearFilters} size="sm" className="border-purple-200 text-purple-600 hover:bg-purple-50">
+                <Button variant="outline" onClick={clearFilters} size="sm" className="text-xs">
                   Limpiar filtros
                 </Button>
               )}
@@ -200,13 +200,12 @@ const Index = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex justify-center items-center space-x-2 bg-white/50 backdrop-blur-sm rounded-xl border border-violet-100 px-6 py-4">
+                  <div className="flex justify-center items-center space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => goToPage(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="border-purple-200 text-purple-600 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Anterior
@@ -234,7 +233,7 @@ const Index = () => {
                             className={`w-10 ${
                               currentPage === pageNum 
                                 ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0" 
-                                : "border-purple-200 text-purple-600 hover:bg-purple-50"
+                                : ""
                             }`}
                           >
                             {pageNum}
@@ -248,7 +247,6 @@ const Index = () => {
                       size="sm"
                       onClick={() => goToPage(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="border-purple-200 text-purple-600 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Siguiente
                       <ChevronRight className="w-4 h-4" />
