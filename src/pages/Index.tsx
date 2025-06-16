@@ -117,8 +117,11 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
       {/* Safe area top gradient for iOS notch/island */}
       <div style={{ height: 'env(safe-area-inset-top)' }} className="w-full bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 fixed top-0 left-0 z-50 pointer-events-none" />
-      {/* Banner principal con gradiente suave y bordes redondeados, incluye barra de búsqueda y carrusel */}
-      <div className="relative bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 pb-8 rounded-b-3xl shadow-lg">
+      
+      {/* Banner principal - tamaño dinámico según estado de carga */}
+      <div className={`relative bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 rounded-b-3xl shadow-lg ${
+        loading ? 'pb-4' : 'pb-8'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <SearchBar
             searchTerm={searchTerm}
@@ -132,14 +135,22 @@ const Index = () => {
             filters={filters}
             setFilters={setFilters}
           />
-          {/* Carrusel o espaciado equivalente */}
-          <div className="mt-6">
-            {benefits.filter(benefit => benefit.is_carousel).length > 0 ? (
-              <HeroCarousel benefits={benefits} />
-            ) : (
-              <div className="h-40 sm:h-72" />
-            )}
-          </div>
+          
+          {/* Carrusel solo cuando no está cargando */}
+          {!loading && (
+            <div className="mt-6">
+              {benefits.filter(benefit => benefit.is_carousel).length > 0 ? (
+                <HeroCarousel benefits={benefits} />
+              ) : (
+                <div className="h-40 sm:h-72" />
+              )}
+            </div>
+          )}
+          
+          {/* Espaciado pequeño cuando está cargando */}
+          {loading && (
+            <div className="mt-4 mb-2" />
+          )}
         </div>
       </div>
       {/* Resto del contenido (beneficios, etc.) */}
@@ -183,12 +194,15 @@ const Index = () => {
               )}
             </div>
 
-            {/* Mostrar mensaje cuando no hay beneficios */}
-            {filteredBenefits.length === 0 ? (
+            {/* Mostrar mensaje cuando no hay beneficios (solo si no está cargando) */}
+            {filteredBenefits.length === 0 && !loading && (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
               </div>
-            ) : (
+            )}
+
+            {/* Mostrar beneficios cuando hay datos */}
+            {filteredBenefits.length > 0 && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
                   {currentBenefits.map((benefit, idx) => (
