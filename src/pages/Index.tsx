@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
 import SearchBar from '../components/SearchBar';
+import SkeletonCard from '../components/SkeletonCard';
 import { Button } from '../components/ui/button';
 import { useBenefits } from '../hooks/useBenefits';
 import HeroCarousel from '../components/HeroCarousel';
@@ -131,8 +132,13 @@ const Index = () => {
             filters={filters}
             setFilters={setFilters}
           />
+          {/* Carrusel o espaciado equivalente */}
           <div className="mt-6">
-            <HeroCarousel benefits={benefits.slice(0, 5)} />
+            {benefits.filter(benefit => benefit.is_carousel).length > 0 ? (
+              <HeroCarousel benefits={benefits} />
+            ) : (
+              <div className="h-40 sm:h-72" />
+            )}
           </div>
         </div>
       </div>
@@ -140,10 +146,19 @@ const Index = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Loading and Error States */}
         {loading && (
-          <div className="text-center py-12">
-            <div className="animate-spin w-12 h-12 border-4 border-violet-200 border-t-violet-600 rounded-full mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Cargando beneficios...</p>
-          </div>
+          <>
+            {/* Results info skeleton */}
+            <div className="mb-4 flex justify-between items-center">
+              <div className="bg-gray-200 h-4 w-48 rounded animate-pulse"></div>
+            </div>
+            
+            {/* Skeleton cards grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+              {Array.from({ length: 12 }, (_, index) => (
+                <SkeletonCard key={index} />
+              ))}
+            </div>
+          </>
         )}
 
         {error && !loading && (
