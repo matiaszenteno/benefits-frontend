@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
 import SearchBar from '../components/SearchBar';
 import { Button } from '../components/ui/button';
@@ -61,7 +61,7 @@ const Index = () => {
     if (isAIMode) {
       return benefits.filter(benefit => {
         const matchesCategory = !filters.category || benefit.category === filters.category;
-        const matchesSubcategory = !filters.subcategory || benefit.merchant_category === filters.subcategory;
+        const matchesSubcategory = !filters.subcategory || benefit.merchant_sub_category === filters.subcategory;
         const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
         const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
@@ -76,7 +76,7 @@ const Index = () => {
                           benefit.category.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCategory = !filters.category || benefit.category === filters.category;
-      const matchesSubcategory = !filters.subcategory || benefit.merchant_category === filters.subcategory;
+      const matchesSubcategory = !filters.subcategory || benefit.merchant_sub_category === filters.subcategory;
       const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
       const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
@@ -158,6 +158,13 @@ const Index = () => {
           </div>
         )}
 
+        {/* Mostrar mensaje cuando no hay beneficios */}
+        {filteredBenefits.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
+          </div>
+        )}
+
         {/* Benefits Grid */}
         {!loading && !error && (
           <>
@@ -173,20 +180,7 @@ const Index = () => {
               )}
             </div>
 
-            {filteredBenefits.length === 0 ? (
-              <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-xl border border-violet-100">
-                <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Filter className="w-8 h-8 text-violet-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">No se encontraron beneficios</h3>
-                <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                  No hay beneficios que coincidan con tu búsqueda o filtros. Intenta con otros términos o limpia los filtros.
-                </p>
-                <Button variant="outline" onClick={clearFilters}>
-                  Limpiar filtros
-                </Button>
-              </div>
-            ) : (
+            {filteredBenefits.length > 0 && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
                   {currentBenefits.map((benefit, idx) => (

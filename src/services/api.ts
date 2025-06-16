@@ -111,6 +111,7 @@ const processBenefits = (benefits: any[]): Benefit[] => {
       ...benefit,
       id: benefit.id?.toString() || '',
       category: benefit.merchant_category || benefit.category || 'Sin categoría',
+      merchant_sub_category: benefit.merchant_sub_category || benefit.sub_category,
       name: benefit.merchant_name || benefit.name || '', // Usar nombre del merchant
       // Mantener compatibilidad con campos existentes
       imageUrl: benefit.image_url || benefit.imageUrl,

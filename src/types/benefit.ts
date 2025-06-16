@@ -4,6 +4,7 @@ export interface Benefit {
   description: string;
   category: string;
   merchant_category?: string;
+  merchant_sub_category?: string;
   provider: string;
   location?: string;
   image_url?: string;
