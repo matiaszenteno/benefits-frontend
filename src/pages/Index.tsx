@@ -14,6 +14,7 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAIMode, setIsAIMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [categories, setCategories] = useState<Array<{id: number, name: string}>>([]);
   const [filters, setFilters] = useState<{
     category: string;
@@ -37,9 +38,11 @@ const Index = () => {
         setCategories(categoriesData);
         
         // Cargar beneficios
-        search('', filters, false);
+        await search('', filters, false);
       } catch (error) {
         console.error('Error loading initial data:', error);
+      } finally {
+        setInitialLoading(false);
       }
     };
     
@@ -118,10 +121,8 @@ const Index = () => {
       {/* Safe area top gradient for iOS notch/island */}
       <div style={{ height: 'env(safe-area-inset-top)' }} className="w-full bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 fixed top-0 left-0 z-50 pointer-events-none" />
       
-      {/* Banner principal - tamaño dinámico según estado de carga */}
-      <div className={`relative bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 rounded-b-3xl shadow-lg ${
-        loading ? 'pb-4' : 'pb-8'
-      }`}>
+      {/* Banner principal - tamaño consistente */}
+      <div className="relative bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 pb-4 rounded-b-3xl shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <SearchBar
             searchTerm={searchTerm}
@@ -136,27 +137,21 @@ const Index = () => {
             setFilters={setFilters}
           />
           
-          {/* Carrusel solo cuando no está cargando */}
-          {!loading && (
-            <div className="mt-6">
-              {benefits.filter(benefit => benefit.is_carousel).length > 0 ? (
-                <HeroCarousel benefits={benefits} />
-              ) : (
-                <div className="h-40 sm:h-72" />
-              )}
+          {/* Carrusel solo cuando no está cargando inicialmente y hay elementos */}
+          {!initialLoading && benefits.filter(benefit => benefit.is_carousel).length > 0 && (
+            <div className="mt-6 -mb-4 pb-4">
+              <HeroCarousel benefits={benefits} />
             </div>
           )}
           
-          {/* Espaciado pequeño cuando está cargando */}
-          {loading && (
-            <div className="mt-4 mb-2" />
-          )}
+          {/* Espaciado pequeño siempre */}
+          <div className="mt-4 mb-2" />
         </div>
       </div>
       {/* Resto del contenido (beneficios, etc.) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Loading and Error States */}
-        {loading && (
+        {(loading || initialLoading) && (
           <>
             {/* Results info skeleton */}
             <div className="mb-4 flex justify-between items-center">
@@ -180,7 +175,7 @@ const Index = () => {
         )}
 
         {/* Benefits Grid */}
-        {!loading && !error && (
+        {!loading && !initialLoading && !error && (
           <>
             {/* Results info */}
             <div className="mb-4 flex justify-between items-center">
@@ -195,7 +190,7 @@ const Index = () => {
             </div>
 
             {/* Mostrar mensaje cuando no hay beneficios (solo si no está cargando) */}
-            {filteredBenefits.length === 0 && !loading && (
+            {filteredBenefits.length === 0 && !loading && !initialLoading && (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
               </div>

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Benefit } from '../types/benefit';
 
 const API_URL = 'https://rt2ntcj19l.execute-api.us-east-1.amazonaws.com/prod';
@@ -74,10 +73,7 @@ export const searchBenefitsAI = async (query: string): Promise<Benefit[]> => {
   }
 };
 
-export const getBenefits = async (): Promise<Benefit[]> => {
-  const response = await axios.get<Benefit[]>(`${API_URL}/benefits`);
-  return processBenefits(response.data);
-};
+
 
 // Obtener categorías
 export const getCategories = async (): Promise<Category[]> => {
