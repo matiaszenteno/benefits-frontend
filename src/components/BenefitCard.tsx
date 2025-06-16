@@ -46,10 +46,14 @@ const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
           alt={benefit.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1">{benefit.category}</Badge>
+        <div className="absolute top-4 left-4 flex flex-col gap-1">
+          <Badge className="bg-black/70 backdrop-blur-sm text-white border-0 px-3 py-1 w-fit hover:bg-gradient-to-r hover:from-purple-200/90 hover:to-pink-200/90 hover:text-gray-800 transition-all duration-200">
+            {benefit.category}
+          </Badge>
           {benefit.merchant_sub_category && benefit.merchant_sub_category !== benefit.category && (
-            <Badge className="bg-black/60 backdrop-blur-sm text-white border-0 px-3 py-1 text-xs">{benefit.merchant_sub_category}</Badge>
+            <Badge className="bg-black/50 backdrop-blur-sm text-white/90 border-0 px-2 py-0.5 text-xs w-fit hover:bg-gradient-to-r hover:from-purple-200/80 hover:to-pink-200/80 hover:text-gray-700 transition-all duration-200">
+              {benefit.merchant_sub_category}
+            </Badge>
           )}
         </div>
       </div>

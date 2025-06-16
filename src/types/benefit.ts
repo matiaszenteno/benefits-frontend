@@ -23,4 +23,6 @@ export interface Benefit {
   color?: string;
   end_date?: string;
   is_active?: boolean;
+  is_carousel?: boolean;
+  carousel_image_url?: string;
 }
