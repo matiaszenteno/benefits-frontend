@@ -93,6 +93,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
+      {/* Safe area top gradient for iOS notch/island */}
+      <div style={{ height: 'env(safe-area-inset-top)' }} className="w-full bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 fixed top-0 left-0 z-50 pointer-events-none" />
       {/* Banner principal con gradiente suave y bordes redondeados, incluye barra de búsqueda y carrusel */}
       <div className="relative bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 pb-8 rounded-b-3xl shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">

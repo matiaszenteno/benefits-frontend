@@ -3,6 +3,7 @@ export interface Benefit {
   name: string;
   description: string;
   category: string;
+  merchant_category?: string;
   provider: string;
   location?: string;
   image_url?: string;
@@ -18,4 +19,6 @@ export interface Benefit {
   contactInfo?: string;
   created_at?: string;
   color?: string;
+  end_date?: string;
+  is_active?: boolean;
 }

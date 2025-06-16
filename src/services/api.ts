@@ -62,9 +62,18 @@ export const getBenefits = async (): Promise<Benefit[]> => {
 
 // Función para procesar los beneficios y asegurar que tengan todos los campos necesarios
 const processBenefits = (benefits: any[]): Benefit[] => {
-  return benefits.map(benefit => ({
-    ...benefit,
-    // Asegurar que la ubicación esté definida (o será 'Sin ubicación' en los componentes)
-    location: benefit.location || undefined
-  }));
+  return benefits
+    .filter(benefit => benefit.is_active !== false) // Solo mostrar beneficios activos
+    .map(benefit => ({
+      ...benefit,
+      id: benefit.id?.toString() || '',
+      category: benefit.merchant_category || benefit.category || 'Sin categoría',
+      // Mantener compatibilidad con campos existentes
+      imageUrl: benefit.image_url || benefit.imageUrl,
+      fullDescription: benefit.description,
+      // Asegurar que todos los campos requeridos estén presentes
+      name: benefit.name || '',
+      description: benefit.description || '',
+      provider: benefit.provider || '',
+    }));
 }; 
