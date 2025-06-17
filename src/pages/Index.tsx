@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
 import SearchBar from '../components/SearchBar';
 import SkeletonCard from '../components/SkeletonCard';
@@ -8,12 +7,9 @@ import { useBenefits } from '../hooks/useBenefits';
 import HeroCarousel from '../components/HeroCarousel';
 import { getCategories } from '../services/api';
 
-const ITEMS_PER_PAGE = 36;
-
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAIMode, setIsAIMode] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [initialLoading, setInitialLoading] = useState(true);
   const [categories, setCategories] = useState<Array<{id: number, name: string}>>([]);
   const [filters, setFilters] = useState<{
@@ -85,17 +81,6 @@ const Index = () => {
     });
   }, [searchTerm, filters, isAIMode, benefits]);
 
-  // Paginación
-  const totalPages = Math.ceil(filteredBenefits.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentBenefits = filteredBenefits.slice(startIndex, endIndex);
-
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filters, isAIMode]);
-
   const clearFilters = () => {
     setFilters({
       category: '',
@@ -104,18 +89,12 @@ const Index = () => {
       validDay: ''
     });
     setSearchTerm('');
-    setCurrentPage(1);
   };
 
   const handleAISearch = () => {
     if (searchTerm.trim()) {
       search(searchTerm, filters, true);
     }
-  };
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -182,7 +161,7 @@ const Index = () => {
             {/* Results info */}
             <div className="mb-4 flex justify-between items-center">
               <p className="text-gray-600 text-sm">
-                Mostrando {startIndex + 1}-{Math.min(endIndex, filteredBenefits.length)} de {filteredBenefits.length} beneficios
+                Mostrando {filteredBenefits.length} beneficios
               </p>
               {(searchTerm || filters.category || filters.subcategory || filters.affiliation) && (
                 <Button variant="outline" onClick={clearFilters} size="sm" className="text-xs">
@@ -191,8 +170,8 @@ const Index = () => {
               )}
             </div>
 
-            {/* Mostrar mensaje cuando no hay beneficios (solo si no está cargando) */}
-            {filteredBenefits.length === 0 && !loading && !initialLoading && (
+            {/* Mostrar mensaje cuando no hay beneficios */}
+            {filteredBenefits.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
               </div>
@@ -200,73 +179,15 @@ const Index = () => {
 
             {/* Mostrar beneficios cuando hay datos */}
             {filteredBenefits.length > 0 && (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-                  {currentBenefits.map((benefit, idx) => (
-                    <BenefitCard
-                      key={benefit.id}
-                      benefit={benefit}
-                      index={idx}
-                    />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex justify-center items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => goToPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Anterior
-                    </Button>
-                    
-                    <div className="flex space-x-1">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        let pageNum;
-                        if (totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalPages - 2) {
-                          pageNum = totalPages - 4 + i;
-                        } else {
-                          pageNum = currentPage - 2 + i;
-                        }
-                        
-                        return (
-                          <Button
-                            key={pageNum}
-                            variant={currentPage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => goToPage(pageNum)}
-                            className={`w-10 ${
-                              currentPage === pageNum 
-                                ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0" 
-                                : ""
-                            }`}
-                          >
-                            {pageNum}
-                          </Button>
-                        );
-                      })}
-                    </div>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => goToPage(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      Siguiente
-                      <ChevronRight className="w-4 h-4" />
-                    </Button>
-                  </div>
-                )}
-              </>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                {filteredBenefits.map((benefit, idx) => (
+                  <BenefitCard
+                    key={benefit.id}
+                    benefit={benefit}
+                    index={idx}
+                  />
+                ))}
+              </div>
             )}
           </>
         )}
