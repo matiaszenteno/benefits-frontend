@@ -11,7 +11,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Filtrar solo beneficios marcados para carrusel
-  const carouselBenefits = benefits.filter(benefit => benefit.is_carousel);
+  const carouselBenefits = Array.isArray(benefits) ? benefits.filter(benefit => benefit.is_carousel) : [];
 
   const defaultImages = [
     'https://assets.bancochile.cl/uploads/000/058/511/e4d4668a-e8bd-4da6-9348-c39f1488cd43/original/banner-web-DO-SUSHI.jpg',

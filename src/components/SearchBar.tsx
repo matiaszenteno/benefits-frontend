@@ -66,7 +66,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   // Filtrar subcategorías basadas en la categoría seleccionada
-  const availableSubcategories = filters.category 
+  const availableSubcategories = filters.category && Array.isArray(benefits)
     ? Array.from(new Set(
         benefits
           .filter(benefit => benefit.category === filters.category && benefit.merchant_sub_category)

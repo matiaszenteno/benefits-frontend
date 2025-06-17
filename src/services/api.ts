@@ -39,7 +39,18 @@ export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<B
     const response = await fetch(`${API_URL}/benefits?${queryParams}`);
     if (!response.ok) throw new Error('Error al obtener beneficios');
     
-    const benefits = await response.json();
+    const data = await response.json();
+    
+    // Asegurar que siempre trabajemos con un array
+    let benefits;
+    if (Array.isArray(data)) {
+      benefits = data;
+    } else if (data && Array.isArray(data.benefits)) {
+      benefits = data.benefits;
+    } else {
+      console.warn('API response is not an array:', data);
+      benefits = [];
+    }
     
     // Procesar los beneficios para asegurar que tengan todos los campos necesarios
     return processBenefits(benefits);
@@ -63,7 +74,13 @@ export const searchBenefitsAI = async (query: string): Promise<Benefit[]> => {
     const result = await response.json();
     
     // La respuesta de la lambda search incluye aiResponse, extraer los beneficios de ahí
-    const benefits = result.aiResponse || [];
+    let benefits = result.aiResponse || [];
+    
+    // Asegurar que siempre trabajemos con un array
+    if (!Array.isArray(benefits)) {
+      console.warn('AI response is not an array:', benefits);
+      benefits = [];
+    }
     
     // Procesar los beneficios para asegurar que tengan todos los campos necesarios
     return processBenefits(benefits);
@@ -101,6 +118,12 @@ export const getSubcategories = async (): Promise<Subcategory[]> => {
 
 // Función para procesar los beneficios y asegurar que tengan todos los campos necesarios
 const processBenefits = (benefits: any[]): Benefit[] => {
+  // Asegurar que benefits sea un array
+  if (!Array.isArray(benefits)) {
+    console.warn('processBenefits received non-array data:', benefits);
+    return [];
+  }
+  
   return benefits
     .filter(benefit => benefit.is_active !== false) // Solo mostrar beneficios activos
     .map(benefit => ({

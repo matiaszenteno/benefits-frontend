@@ -50,12 +50,14 @@ const Index = () => {
   }, []);
 
   // Obtener proveedores únicos de los beneficios del backend
-  const affiliations = useMemo(() => 
-    Array.from(new Set(benefits.filter(b => b.provider).map(b => b.provider as string))).sort(),
-    [benefits]
-  );
+  const affiliations = useMemo(() => {
+    if (!Array.isArray(benefits)) return [];
+    return Array.from(new Set(benefits.filter(b => b.provider).map(b => b.provider as string))).sort();
+  }, [benefits]);
 
   const filteredBenefits = useMemo(() => {
+    if (!Array.isArray(benefits)) return [];
+    
     // En modo AI, no aplicamos filtros de texto hasta que se ejecute la búsqueda AI
     if (isAIMode) {
       return benefits.filter(benefit => {
@@ -138,7 +140,7 @@ const Index = () => {
           />
           
           {/* Carrusel solo cuando no está cargando inicialmente y hay elementos */}
-          {!initialLoading && benefits.filter(benefit => benefit.is_carousel).length > 0 && (
+          {!initialLoading && Array.isArray(benefits) && benefits.filter(benefit => benefit.is_carousel).length > 0 && (
             <div className="mt-6 -mb-4 pb-4">
               <HeroCarousel benefits={benefits} />
             </div>
