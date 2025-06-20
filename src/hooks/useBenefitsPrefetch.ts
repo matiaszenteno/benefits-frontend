@@ -172,6 +172,14 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
 
   // Cargar beneficios (función principal)
   const loadBenefits = async (filters: BenefitsFilter = {}) => {
+    // Limpiar cache si los filtros han cambiado
+    const newCacheKey = getCacheKey(filters);
+    const oldCacheKey = getCacheKey(currentFilters);
+    
+    if (newCacheKey !== oldCacheKey) {
+      setCache(new Map());
+    }
+    
     setCurrentFilters(filters);
     setCurrentPage(1);
     setIsAIMode(false);

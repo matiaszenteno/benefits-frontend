@@ -40,8 +40,7 @@ const Index = () => {
     error, 
     loadBenefits, 
     searchAI, 
-    goToPage,
-    isPageCached 
+    goToPage
   } = useBenefitsPrefetch();
   
   // Cargar datos iniciales
@@ -56,7 +55,7 @@ const Index = () => {
           category: filters.category || undefined
         });
       } catch (error) {
-        console.error('Error loading initial data:', error);
+        // Error silencioso, la UI manejará el estado de error
       } finally {
         setInitialLoading(false);
       }
@@ -102,12 +101,12 @@ const Index = () => {
 
   // Cargar nuevos datos cuando cambian los filtros del backend
   useEffect(() => {
-    if (!isAIMode) {
+    if (!isAIMode && !initialLoading) {
       loadBenefits({
         category: filters.category || undefined
       });
     }
-  }, [filters.category, isAIMode]);
+  }, [filters.category, isAIMode, initialLoading, loadBenefits]);
 
   const clearFilters = () => {
     setFilters({
@@ -144,7 +143,7 @@ const Index = () => {
     setSearchTerm('');
     
     // Cargar beneficios con nuevo filtro
-    loadBenefits({ category });
+    loadBenefits({ category: category || undefined });
   }, [loadBenefits]);
 
   const handleSubcategoryFilter = useCallback((subcategory: string) => {
@@ -177,7 +176,7 @@ const Index = () => {
           />
           
           {/* Carrusel solo cuando no está cargando inicialmente y hay elementos */}
-          {!initialLoading && Array.isArray(benefits) && benefits.filter(benefit => benefit.is_carousel).length > 0 && (
+          {!initialLoading && Array.isArray(benefits) && benefits.length > 0 && (
             <div className="mt-6 -mb-4 pb-4">
               <HeroCarousel benefits={benefits} />
             </div>
@@ -316,27 +315,19 @@ const Index = () => {
                           pageNum = currentPage - 2 + i;
                         }
                         
-                        const isCached = isPageCached(pageNum);
-                        
                         return (
                           <Button
                             key={pageNum}
                             variant={currentPage === pageNum ? "default" : "outline"}
                             size="sm"
                             onClick={() => handleGoToPage(pageNum)}
-                            className={`w-10 relative ${
+                            className={`w-10 ${
                               currentPage === pageNum 
                                 ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0" 
-                                : isCached
-                                ? "border-green-300 bg-green-50"
                                 : ""
                             }`}
-                            title={isCached ? "Página en cache (carga instantánea)" : "Se cargará desde servidor"}
                           >
                             {pageNum}
-                            {isCached && currentPage !== pageNum && (
-                              <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full"></div>
-                            )}
                           </Button>
                         );
                       })}

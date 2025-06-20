@@ -55,7 +55,6 @@ export const getBenefitsPaginated = async (filters: BenefitsFilter = {}): Promis
       pagination: data.pagination
     };
   } catch (error) {
-    console.error('Error al obtener beneficios paginados:', error);
     throw error;
   }
 };
@@ -71,7 +70,6 @@ export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<B
     
     return paginatedResponse.data;
   } catch (error) {
-    console.error('Error en filtros tradicionales:', error);
     throw error;
   }
 };
@@ -94,14 +92,12 @@ export const searchBenefitsAI = async (query: string): Promise<Benefit[]> => {
     
     // Asegurar que siempre trabajemos con un array
     if (!Array.isArray(benefits)) {
-      console.warn('AI response is not an array:', benefits);
       benefits = [];
     }
     
     // Procesar los beneficios para asegurar que tengan todos los campos necesarios
     return processBenefits(benefits);
   } catch (error) {
-    console.error('Error en búsqueda AI:', error);
     throw error;
   }
 };
@@ -118,7 +114,6 @@ export const getCategories = async (): Promise<Category[]> => {
     // Manejar tanto respuestas directas como con formato {data: [...]}
     return Array.isArray(data) ? data : (data.data || []);
   } catch (error) {
-    console.error('Error al obtener categorías:', error);
     throw error;
   }
 };
@@ -133,7 +128,6 @@ export const getSubcategories = async (): Promise<Subcategory[]> => {
     // Manejar tanto respuestas directas como con formato {data: [...]}
     return Array.isArray(data) ? data : (data.data || []);
   } catch (error) {
-    console.error('Error al obtener subcategorías:', error);
     throw error;
   }
 };
@@ -141,13 +135,7 @@ export const getSubcategories = async (): Promise<Subcategory[]> => {
 // Función para procesar los beneficios y asegurar que tengan todos los campos necesarios
 const processBenefits = (benefits: any[]): Benefit[] => {
   // Asegurar que benefits sea un array
-  if (!benefits) {
-    console.warn('processBenefits received null/undefined data');
-    return [];
-  }
-  
-  if (!Array.isArray(benefits)) {
-    console.warn('processBenefits received non-array data:', typeof benefits, benefits);
+  if (!benefits || !Array.isArray(benefits)) {
     return [];
   }
   
@@ -155,7 +143,6 @@ const processBenefits = (benefits: any[]): Benefit[] => {
     .filter(benefit => {
       // Filtrar elementos que no sean objetos válidos
       if (!benefit || typeof benefit !== 'object') {
-        console.warn('Invalid benefit object:', benefit);
         return false;
       }
       return benefit.is_active !== false; // Solo mostrar beneficios activos
