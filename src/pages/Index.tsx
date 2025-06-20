@@ -99,19 +99,7 @@ const Index = () => {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1;
   const endIndex = Math.min(startIndex + displayBenefits.length - 1, displayTotalItems);
 
-  // Cargar nuevos datos cuando cambian los filtros del backend - solo si no es por click directo
-  useEffect(() => {
-    if (!isAIMode && !initialLoading && !searchTerm) {
-      // Solo recargar si el filtro cambió por otros medios (no por handleCategoryFilter)
-      const timeoutId = setTimeout(() => {
-        loadBenefits({
-          category: filters.category || undefined
-        });
-      }, 100); // Debounce para evitar doble carga
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [filters.category, isAIMode, initialLoading, searchTerm]);
+  // Removed the problematic useEffect that was causing multiple calls
 
   const clearFilters = () => {
     setFilters({
@@ -140,19 +128,16 @@ const Index = () => {
   };
 
   const handleCategoryFilter = useCallback(async (category: string) => {
+    // Actualizar solo el estado de filtros
     setFilters(prev => ({
       ...prev,
-      category
+      category: category || ''
     }));
     setIsAIMode(false);
     setSearchTerm('');
     
-    // Cargar beneficios con nuevo filtro
-    try {
-      await loadBenefits({ category: category || undefined });
-    } catch (error) {
-      // Error handling silencioso
-    }
+    // Cargar beneficios con nuevo filtro - una sola llamada
+    await loadBenefits({ category: category || undefined });
   }, [loadBenefits]);
 
   const handleSubcategoryFilter = useCallback((subcategory: string) => {

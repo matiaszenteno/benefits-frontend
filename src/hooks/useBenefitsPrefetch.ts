@@ -43,12 +43,12 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
   const [totalPages, setTotalPages] = useState(0);
 
   // Generar clave de cache para filtros
-  const getCacheKey = (filters: BenefitsFilter): string => {
+  const getCacheKey = useCallback((filters: BenefitsFilter): string => {
     return JSON.stringify({
       category: filters.category || '',
       is_active: filters.is_active !== undefined ? filters.is_active : true
     });
-  };
+  }, []);
 
   // Calcular qué chunk contiene una página específica
   const getChunkForPage = (page: number): number => {
@@ -75,7 +75,7 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
   }, [cache, currentFilters, isAIMode]);
 
   // Cargar un chunk de datos del backend
-  const loadChunk = async (chunkNumber: number, filters: BenefitsFilter, isPrefetch = false): Promise<void> => {
+  const loadChunk = useCallback(async (chunkNumber: number, filters: BenefitsFilter, isPrefetch = false): Promise<void> => {
     const cacheKey = getCacheKey(filters);
     
     // Si ya está en cache, no recargar
@@ -125,7 +125,7 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
       setLoading(false);
       setPrefetching(false);
     }
-  };
+  }, [cache, getCacheKey]);
 
   // Obtener beneficios para la página actual desde cache
   const getCurrentPageBenefits = (): Benefit[] => {
@@ -174,7 +174,10 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
   }, [currentPage, currentFilters, cache, totalPages, isAIMode]);
 
   // Cargar beneficios (función principal)
-  const loadBenefits = async (filters: BenefitsFilter = {}) => {
+  const loadBenefits = useCallback(async (filters: BenefitsFilter = {}) => {
+    // Prevenir múltiples llamadas simultáneas
+    if (loading) return;
+    
     // Limpiar cache si los filtros han cambiado
     const newCacheKey = getCacheKey(filters);
     const oldCacheKey = getCacheKey(currentFilters);
@@ -190,7 +193,7 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
     
     const chunkNumber = getChunkForPage(1);
     await loadChunk(chunkNumber, filters, false);
-  };
+  }, [loading, getCacheKey, currentFilters, loadChunk]);
 
   // Búsqueda AI
   const searchAI = async (query: string) => {
