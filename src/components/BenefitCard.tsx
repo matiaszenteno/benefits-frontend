@@ -67,9 +67,9 @@ const BenefitCard: React.FC<BenefitCardProps> = ({
           alt={benefit.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
-        <div className="absolute top-4 left-4 flex flex-col gap-1">
+        <div className="absolute top-4 right-4 flex flex-col gap-1 items-end">
           <Badge 
-            className="bg-black/70 backdrop-blur-sm text-white border-0 px-3 py-1 w-fit hover:bg-gradient-to-r hover:from-purple-200/90 hover:to-pink-200/90 hover:text-gray-800 transition-all duration-200 cursor-pointer hover:scale-105"
+            className="bg-white/95 backdrop-blur-sm text-gray-800 border-0 px-3 py-1 w-fit hover:bg-white hover:text-gray-900 transition-all duration-200 cursor-pointer hover:scale-105 shadow-sm"
             onClick={handleCategoryClick}
             title={`Filtrar por categoría: ${benefit.category}`}
           >
@@ -77,7 +77,7 @@ const BenefitCard: React.FC<BenefitCardProps> = ({
           </Badge>
           {benefit.merchant_sub_category && benefit.merchant_sub_category !== benefit.category && (
             <Badge 
-              className="bg-black/50 backdrop-blur-sm text-white/90 border-0 px-2 py-0.5 text-xs w-fit hover:bg-gradient-to-r hover:from-purple-200/80 hover:to-pink-200/80 hover:text-gray-700 transition-all duration-200 cursor-pointer hover:scale-105"
+              className="bg-gray-100/95 backdrop-blur-sm text-gray-700 border-0 px-2 py-0.5 text-xs w-fit hover:bg-gray-200/95 hover:text-gray-800 transition-all duration-200 cursor-pointer hover:scale-105 shadow-sm"
               onClick={handleSubcategoryClick}
               title={`Filtrar por subcategoría: ${benefit.merchant_sub_category}`}
             >

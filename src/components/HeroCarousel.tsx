@@ -32,7 +32,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
     
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % carouselBenefits.length);
-    }, 5000);
+    }, 4000); // Cambiar cada 4 segundos
     return () => clearInterval(timer);
   }, [carouselBenefits.length]);
 
@@ -175,13 +175,13 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
         </p>
       </div>
       
-      {/* Navigation */}
+      {/* Navigation - Solo visible en desktop */}
       <Button
         onClick={(e) => {
           e.stopPropagation();
           goToPrevious();
         }}
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300"
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:block"
       >
         <ChevronLeft className="w-6 h-6" />
       </Button>
@@ -190,7 +190,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
           e.stopPropagation();
           goToNext();
         }}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:block"
       >
         <ChevronRight className="w-6 h-6" />
       </Button>
