@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Search, Sparkles } from 'lucide-react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -44,13 +44,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   filters,
   setFilters
 }) => {
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && isAIMode) {
       onAISearch();
     }
-  };
+  }, [isAIMode, onAISearch]);
 
-  const updateFilter = (key: string, value: string) => {
+  const updateFilter = useCallback((key: string, value: string) => {
     const newValue = value === 'all' ? '' : value;
     
     // Si se cambia la categoría, resetear subcategoría
@@ -63,16 +63,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
     } else {
       setFilters(prev => ({ ...prev, [key]: newValue }));
     }
-  };
+  }, [setFilters]);
 
-  // Filtrar subcategorías basadas en la categoría seleccionada
-  const availableSubcategories = filters.category && Array.isArray(benefits)
-    ? Array.from(new Set(
-        benefits
-          .filter(benefit => benefit.category === filters.category && benefit.merchant_sub_category)
-          .map(benefit => benefit.merchant_sub_category)
-      )).sort().map((name, index) => ({ id: index, name }))
-    : [];
+  // Optimizar con useMemo - solo recalcular cuando cambie la categoría o benefits
+  const availableSubcategories = useMemo(() => {
+    if (!filters.category || !Array.isArray(benefits)) return [];
+    
+    return Array.from(new Set(
+      benefits
+        .filter(benefit => benefit.category === filters.category && benefit.merchant_sub_category)
+        .map(benefit => benefit.merchant_sub_category)
+    )).sort().map((name, index) => ({ id: index, name }));
+  }, [filters.category, benefits]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-3 items-center w-full max-w-7xl mx-auto">
@@ -111,10 +113,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onValueChange={(value) => updateFilter('category', value)}
         >
           <SelectTrigger className="w-44 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
-            <SelectValue placeholder="Seleccionar categoría" />
+            <SelectValue placeholder="Categoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Categorías</SelectItem>
+            <SelectItem value="all">Todas</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.name}>
                 {category.name}
@@ -131,10 +133,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <SelectTrigger className={`w-44 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm ${
             !filters.category ? 'opacity-50 cursor-not-allowed' : ''
           }`}>
-            <SelectValue placeholder="Seleccionar subcategoría" />
+            <SelectValue placeholder="Subcategoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Subcategoría</SelectItem>
+            <SelectItem value="all">Todas</SelectItem>
             {availableSubcategories.map((subcategory) => (
               <SelectItem key={subcategory.id} value={subcategory.name}>
                 {subcategory.name}
@@ -148,10 +150,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onValueChange={(value) => updateFilter('affiliation', value)}
         >
           <SelectTrigger className="w-44 h-11 border-0 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl text-sm">
-            <SelectValue placeholder="Seleccionar afiliación" />
+            <SelectValue placeholder="Afiliación" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Afiliación</SelectItem>
+            <SelectItem value="all">Todas</SelectItem>
             {affiliations.map((aff) => (
               <SelectItem key={aff} value={aff}>
                 {aff}

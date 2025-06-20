@@ -1,10 +1,11 @@
-import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Wifi } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
 import SearchBar from '../components/SearchBar';
 import SkeletonCard from '../components/SkeletonCard';
 import { Button } from '../components/ui/button';
-import { useBenefits } from '../hooks/useBenefits';
+import { useBenefitsPrefetch } from '../hooks/useBenefitsPrefetch';
+import { useDebounce } from '../hooks/useDebounce';
 import HeroCarousel from '../components/HeroCarousel';
 import { getCategories } from '../services/api';
 
@@ -13,7 +14,6 @@ const ITEMS_PER_PAGE = 12;
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAIMode, setIsAIMode] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [initialLoading, setInitialLoading] = useState(true);
   const [categories, setCategories] = useState<Array<{id: number, name: string}>>([]);
   const [filters, setFilters] = useState<{
@@ -28,7 +28,21 @@ const Index = () => {
     validDay: ''
   });
 
-  const { benefits, loading, error, search } = useBenefits();
+  const { 
+    benefits, 
+    currentPage, 
+    totalItems, 
+    totalPages, 
+    hasNext, 
+    hasPrev, 
+    loading, 
+    prefetching, 
+    error, 
+    loadBenefits, 
+    searchAI, 
+    goToPage,
+    isPageCached 
+  } = useBenefitsPrefetch();
   
   // Cargar datos iniciales
   useEffect(() => {
@@ -37,8 +51,10 @@ const Index = () => {
         const categoriesData = await getCategories();
         setCategories(categoriesData);
         
-        // Cargar beneficios
-        await search('', filters, false);
+        // Cargar primer chunk de beneficios (36 beneficios = 3 páginas)
+        await loadBenefits({
+          category: filters.category || undefined
+        });
       } catch (error) {
         console.error('Error loading initial data:', error);
       } finally {
@@ -49,52 +65,49 @@ const Index = () => {
     loadInitialData();
   }, []);
 
-  // Obtener proveedores únicos de los beneficios del backend
+  // Debounce para búsqueda en tiempo real
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  // Obtener proveedores únicos de los beneficios del backend (memoizado)
   const affiliations = useMemo(() => {
     if (!Array.isArray(benefits)) return [];
     return Array.from(new Set(benefits.filter(b => b.provider).map(b => b.provider as string))).sort();
   }, [benefits]);
 
+  // Aplicar filtros locales solo para búsqueda de texto y filtros no soportados por backend
   const filteredBenefits = useMemo(() => {
     if (!Array.isArray(benefits)) return [];
     
-    // En modo AI, no aplicamos filtros de texto hasta que se ejecute la búsqueda AI
-    if (isAIMode) {
-      return benefits.filter(benefit => {
-        const matchesCategory = !filters.category || benefit.category === filters.category;
-        const matchesSubcategory = !filters.subcategory || benefit.merchant_sub_category === filters.subcategory;
-        const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
-        const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
-
-        return matchesCategory && matchesSubcategory && matchesAffiliation && matchesDay;
-      });
-    }
-
     return benefits.filter(benefit => {
-      const matchesSearch = !searchTerm || 
-                          benefit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          benefit.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          benefit.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = !debouncedSearchTerm || 
+                          benefit.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          benefit.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          benefit.category.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
       
-      const matchesCategory = !filters.category || benefit.category === filters.category;
       const matchesSubcategory = !filters.subcategory || benefit.merchant_sub_category === filters.subcategory;
       const matchesAffiliation = !filters.affiliation || benefit.provider === filters.affiliation;
       const matchesDay = !filters.validDay || (benefit.validDays && benefit.validDays.includes(filters.validDay));
 
-      return matchesSearch && matchesCategory && matchesSubcategory && matchesAffiliation && matchesDay;
+      return matchesSearch && matchesSubcategory && matchesAffiliation && matchesDay;
     });
-  }, [searchTerm, filters, isAIMode, benefits]);
+  }, [debouncedSearchTerm, filters, benefits]);
 
-  // Client-side pagination
-  const totalPages = Math.ceil(filteredBenefits.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentBenefits = filteredBenefits.slice(startIndex, endIndex);
+  // Determinar si usar datos filtrados o del backend directo
+  const shouldUseFilteredData = debouncedSearchTerm || filters.subcategory || filters.affiliation || filters.validDay;
+  const displayBenefits = shouldUseFilteredData ? filteredBenefits : benefits;
+  const displayTotalItems = shouldUseFilteredData ? filteredBenefits.length : totalItems;
+  
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const endIndex = Math.min(startIndex + displayBenefits.length - 1, displayTotalItems);
 
-  // Reset page when filters change
+  // Cargar nuevos datos cuando cambian los filtros del backend
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filters, isAIMode]);
+    if (!isAIMode) {
+      loadBenefits({
+        category: filters.category || undefined
+      });
+    }
+  }, [filters.category, isAIMode]);
 
   const clearFilters = () => {
     setFilters({
@@ -104,19 +117,43 @@ const Index = () => {
       validDay: ''
     });
     setSearchTerm('');
-    setCurrentPage(1);
+    setIsAIMode(false);
+    
+    // Recargar datos desde el backend
+    loadBenefits({});
   };
 
   const handleAISearch = () => {
     if (searchTerm.trim()) {
-      search(searchTerm, filters, true);
+      setIsAIMode(true);
+      searchAI(searchTerm);
     }
   };
 
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
+  const handleGoToPage = (page: number) => {
+    goToPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleCategoryFilter = useCallback((category: string) => {
+    setFilters(prev => ({
+      ...prev,
+      category
+    }));
+    setIsAIMode(false);
+    setSearchTerm('');
+    
+    // Cargar beneficios con nuevo filtro
+    loadBenefits({ category });
+  }, [loadBenefits]);
+
+  const handleSubcategoryFilter = useCallback((subcategory: string) => {
+    setFilters(prev => ({
+      ...prev,
+      subcategory
+    }));
+    // No se recarga desde backend porque subcategory es filtro frontend
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
@@ -181,9 +218,17 @@ const Index = () => {
           <>
             {/* Results info */}
             <div className="mb-4 flex justify-between items-center">
-              <p className="text-gray-600 text-sm">
-                Mostrando {startIndex + 1}-{Math.min(endIndex, filteredBenefits.length)} de {filteredBenefits.length} beneficios
-              </p>
+              <div className="flex items-center space-x-2">
+                <p className="text-gray-600 text-sm">
+                  Mostrando {startIndex}-{endIndex} de {displayTotalItems} beneficios
+                </p>
+                {prefetching && (
+                  <div className="flex items-center text-blue-500 text-xs">
+                    <Wifi className="w-3 h-3 animate-pulse mr-1" />
+                    Cargando más...
+                  </div>
+                )}
+              </div>
               {(searchTerm || filters.category || filters.subcategory || filters.affiliation) && (
                 <Button variant="outline" onClick={clearFilters} size="sm" className="text-xs">
                   Limpiar filtros
@@ -192,21 +237,55 @@ const Index = () => {
             </div>
 
             {/* Mostrar mensaje cuando no hay beneficios */}
-            {filteredBenefits.length === 0 && (
+            {displayBenefits.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No se encontraron beneficios</p>
               </div>
             )}
 
+            {/* Quick Category Filters */}
+            {!initialLoading && categories.length > 0 && !searchTerm && !isAIMode && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Categorías populares</h3>
+                <div className="flex flex-wrap gap-2 max-h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-200 scrollbar-track-transparent">
+                  <button
+                    onClick={() => handleCategoryFilter('')}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                      !filters.category 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-300 hover:text-purple-600'
+                    }`}
+                  >
+                    Todas
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategoryFilter(category.name)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                        filters.category === category.name
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                          : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-300 hover:text-purple-600'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Mostrar beneficios cuando hay datos */}
-            {filteredBenefits.length > 0 && (
+            {displayBenefits.length > 0 && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-                  {currentBenefits.map((benefit, idx) => (
+                  {displayBenefits.map((benefit, idx) => (
                     <BenefitCard
                       key={benefit.id}
                       benefit={benefit}
                       index={idx}
+                      onCategoryClick={handleCategoryFilter}
+                      onSubcategoryClick={handleSubcategoryFilter}
                     />
                   ))}
                 </div>
@@ -217,8 +296,8 @@ const Index = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => goToPage(currentPage - 1)}
-                      disabled={currentPage === 1}
+                      onClick={() => handleGoToPage(currentPage - 1)}
+                      disabled={!hasPrev}
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Anterior
@@ -237,19 +316,27 @@ const Index = () => {
                           pageNum = currentPage - 2 + i;
                         }
                         
+                        const isCached = isPageCached(pageNum);
+                        
                         return (
                           <Button
                             key={pageNum}
                             variant={currentPage === pageNum ? "default" : "outline"}
                             size="sm"
-                            onClick={() => goToPage(pageNum)}
-                            className={`w-10 ${
+                            onClick={() => handleGoToPage(pageNum)}
+                            className={`w-10 relative ${
                               currentPage === pageNum 
                                 ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0" 
+                                : isCached
+                                ? "border-green-300 bg-green-50"
                                 : ""
                             }`}
+                            title={isCached ? "Página en cache (carga instantánea)" : "Se cargará desde servidor"}
                           >
                             {pageNum}
+                            {isCached && currentPage !== pageNum && (
+                              <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full"></div>
+                            )}
                           </Button>
                         );
                       })}
@@ -258,8 +345,8 @@ const Index = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => goToPage(currentPage + 1)}
-                      disabled={currentPage === totalPages}
+                      onClick={() => handleGoToPage(currentPage + 1)}
+                      disabled={!hasNext}
                     >
                       Siguiente
                       <ChevronRight className="w-4 h-4" />

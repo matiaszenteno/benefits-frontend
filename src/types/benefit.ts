@@ -26,3 +26,22 @@ export interface Benefit {
   is_carousel?: boolean;
   carousel_image_url?: string;
 }
+
+export interface PaginatedBenefitsResponse {
+  data: Benefit[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+export interface BenefitsFilter {
+  category?: string;
+  is_active?: boolean;
+  page?: number;
+  limit?: number;
+}

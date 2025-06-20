@@ -1,4 +1,4 @@
-import { Benefit } from '../types/benefit';
+import { Benefit, PaginatedBenefitsResponse, BenefitsFilter } from '../types/benefit';
 
 const API_URL = 'https://rt2ntcj19l.execute-api.us-east-1.amazonaws.com/prod';
 const AI_SEARCH_URL = 'https://rt2ntcj19l.execute-api.us-east-1.amazonaws.com/prod/search';
@@ -22,12 +22,16 @@ interface Subcategory {
   category_id?: number;
 }
 
-// Para filtros tradicionales con paginación
-export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<Benefit[]> => {
+// Nueva función con paginación del backend
+export const getBenefitsPaginated = async (filters: BenefitsFilter = {}): Promise<PaginatedBenefitsResponse> => {
   try {
     const queryParams = new URLSearchParams();
+    
     if (filters.category) {
       queryParams.append('category', filters.category);
+    }
+    if (filters.is_active !== undefined) {
+      queryParams.append('is_active', filters.is_active.toString());
     }
     if (filters.page) {
       queryParams.append('page', filters.page.toString());
@@ -41,19 +45,31 @@ export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<B
     
     const data = await response.json();
     
-    // Asegurar que siempre trabajemos con un array
-    let benefits;
-    if (Array.isArray(data)) {
-      benefits = data;
-    } else if (data && Array.isArray(data.benefits)) {
-      benefits = data.benefits;
-    } else {
-      console.warn('API response is not an array:', data);
-      benefits = [];
+    // El backend devuelve { data: Benefit[], pagination: {...} }
+    if (!data.data || !Array.isArray(data.data)) {
+      throw new Error('Formato de respuesta inválido del servidor');
     }
     
-    // Procesar los beneficios para asegurar que tengan todos los campos necesarios
-    return processBenefits(benefits);
+    return {
+      data: processBenefits(data.data),
+      pagination: data.pagination
+    };
+  } catch (error) {
+    console.error('Error al obtener beneficios paginados:', error);
+    throw error;
+  }
+};
+
+// Mantener la función original para compatibilidad (ahora usa la nueva paginación)
+export const getFilteredBenefits = async (filters: FilterParams = {}): Promise<Benefit[]> => {
+  try {
+    const paginatedResponse = await getBenefitsPaginated({
+      category: filters.category,
+      page: filters.page || 1,
+      limit: filters.limit || 36 // Default 36 para prefetch, compatible con nueva estrategia
+    });
+    
+    return paginatedResponse.data;
   } catch (error) {
     console.error('Error en filtros tradicionales:', error);
     throw error;

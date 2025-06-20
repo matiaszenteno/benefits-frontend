@@ -7,6 +7,8 @@ import { Benefit } from '../types/benefit';
 interface BenefitCardProps {
   benefit: Benefit;
   index: number;
+  onCategoryClick?: (category: string) => void;
+  onSubcategoryClick?: (subcategory: string) => void;
 }
 
 const CARD_GRADIENTS = [
@@ -22,13 +24,32 @@ const CARD_IMAGES = [
   'https://assets.bancochile.cl/uploads/000/026/819/f634857a-7aa5-4ce0-81aa-31a7ae569dc3/original/Wendys_Sept22-212.jpg',
 ];
 
-const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
+const BenefitCard: React.FC<BenefitCardProps> = ({ 
+  benefit, 
+  index, 
+  onCategoryClick, 
+  onSubcategoryClick 
+}) => {
   const color = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
 
   const handleVisitBenefit = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (benefit.source_url) {
       window.open(benefit.source_url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const handleCategoryClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onCategoryClick) {
+      onCategoryClick(benefit.category);
+    }
+  };
+
+  const handleSubcategoryClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onSubcategoryClick && benefit.merchant_sub_category) {
+      onSubcategoryClick(benefit.merchant_sub_category);
     }
   };
 
@@ -47,11 +68,19 @@ const BenefitCard: React.FC<BenefitCardProps> = ({ benefit, index }) => {
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
         <div className="absolute top-4 left-4 flex flex-col gap-1">
-          <Badge className="bg-black/70 backdrop-blur-sm text-white border-0 px-3 py-1 w-fit hover:bg-gradient-to-r hover:from-purple-200/90 hover:to-pink-200/90 hover:text-gray-800 transition-all duration-200">
+          <Badge 
+            className="bg-black/70 backdrop-blur-sm text-white border-0 px-3 py-1 w-fit hover:bg-gradient-to-r hover:from-purple-200/90 hover:to-pink-200/90 hover:text-gray-800 transition-all duration-200 cursor-pointer hover:scale-105"
+            onClick={handleCategoryClick}
+            title={`Filtrar por categoría: ${benefit.category}`}
+          >
             {benefit.category}
           </Badge>
           {benefit.merchant_sub_category && benefit.merchant_sub_category !== benefit.category && (
-            <Badge className="bg-black/50 backdrop-blur-sm text-white/90 border-0 px-2 py-0.5 text-xs w-fit hover:bg-gradient-to-r hover:from-purple-200/80 hover:to-pink-200/80 hover:text-gray-700 transition-all duration-200">
+            <Badge 
+              className="bg-black/50 backdrop-blur-sm text-white/90 border-0 px-2 py-0.5 text-xs w-fit hover:bg-gradient-to-r hover:from-purple-200/80 hover:to-pink-200/80 hover:text-gray-700 transition-all duration-200 cursor-pointer hover:scale-105"
+              onClick={handleSubcategoryClick}
+              title={`Filtrar por subcategoría: ${benefit.merchant_sub_category}`}
+            >
               {benefit.merchant_sub_category}
             </Badge>
           )}
