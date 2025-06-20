@@ -150,9 +150,9 @@ const processBenefits = (benefits: any[]): Benefit[] => {
     .map(benefit => ({
       ...benefit,
       id: benefit.id?.toString() || Math.random().toString(36).substr(2, 9), // Fallback ID
-      category: benefit.merchant_category || benefit.category || 'Sin categoría',
-      merchant_sub_category: benefit.merchant_sub_category || benefit.sub_category,
-      name: benefit.merchant_name || benefit.name || 'Sin nombre', // Usar nombre del merchant
+      category: benefit.category_name || benefit.merchant_category || benefit.category || 'Sin categoría',
+      merchant_sub_category: benefit.sub_category_name || benefit.merchant_sub_category || benefit.sub_category,
+      name: benefit.name || 'Sin nombre',
       // Mantener compatibilidad con campos existentes
       imageUrl: benefit.image_url || benefit.imageUrl,
       fullDescription: benefit.description,

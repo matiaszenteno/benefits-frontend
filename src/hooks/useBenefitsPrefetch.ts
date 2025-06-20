@@ -83,6 +83,9 @@ export const useBenefitsPrefetch = (): UseBenefitsPrefetchReturn => {
       const existingChunk = cache.get(cacheKey)!;
       const [chunkStart] = getChunkPageRange(chunkNumber);
       if (chunkStart >= existingChunk.startPage && chunkStart <= existingChunk.endPage) {
+        // Actualizar totales incluso si no recargamos datos
+        setTotalItems(existingChunk.total);
+        setTotalPages(existingChunk.totalPages);
         return;
       }
     }

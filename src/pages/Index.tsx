@@ -99,14 +99,19 @@ const Index = () => {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1;
   const endIndex = Math.min(startIndex + displayBenefits.length - 1, displayTotalItems);
 
-  // Cargar nuevos datos cuando cambian los filtros del backend
+  // Cargar nuevos datos cuando cambian los filtros del backend - solo si no es por click directo
   useEffect(() => {
-    if (!isAIMode && !initialLoading) {
-      loadBenefits({
-        category: filters.category || undefined
-      });
+    if (!isAIMode && !initialLoading && !searchTerm) {
+      // Solo recargar si el filtro cambió por otros medios (no por handleCategoryFilter)
+      const timeoutId = setTimeout(() => {
+        loadBenefits({
+          category: filters.category || undefined
+        });
+      }, 100); // Debounce para evitar doble carga
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [filters.category, isAIMode, initialLoading, loadBenefits]);
+  }, [filters.category, isAIMode, initialLoading, searchTerm]);
 
   const clearFilters = () => {
     setFilters({
@@ -134,7 +139,7 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCategoryFilter = useCallback((category: string) => {
+  const handleCategoryFilter = useCallback(async (category: string) => {
     setFilters(prev => ({
       ...prev,
       category
@@ -143,7 +148,11 @@ const Index = () => {
     setSearchTerm('');
     
     // Cargar beneficios con nuevo filtro
-    loadBenefits({ category: category || undefined });
+    try {
+      await loadBenefits({ category: category || undefined });
+    } catch (error) {
+      // Error handling silencioso
+    }
   }, [loadBenefits]);
 
   const handleSubcategoryFilter = useCallback((subcategory: string) => {
