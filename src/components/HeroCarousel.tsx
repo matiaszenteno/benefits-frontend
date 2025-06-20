@@ -64,7 +64,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
     if (!isDragging) return;
     
     const deltaX = currentX - startX;
-    const threshold = 50; // Minimum swipe distance
+    const threshold = 30; // Threshold más sensible para mobile
     
     if (Math.abs(deltaX) > threshold) {
       if (deltaX > 0) {
@@ -78,17 +78,22 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
     setOffset(0);
   }, [isDragging, currentX, startX, goToPrevious, goToNext]);
 
-  // Touch events
+  // Touch events optimizados para mobile
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation(); // Prevenir que el evento se propague al parent
     handleStart(e.touches[0].clientX);
   }, [handleStart]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault(); // Prevent scrolling
-    handleMove(e.touches[0].clientX);
-  }, [handleMove]);
+    if (isDragging) {
+      e.preventDefault(); // Solo prevenir scroll si estamos arrastrando
+      e.stopPropagation();
+      handleMove(e.touches[0].clientX);
+    }
+  }, [handleMove, isDragging]);
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
     handleEnd();
   }, [handleEnd]);
 
@@ -136,7 +141,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
   return (
     <div 
       ref={carouselRef}
-      className={`relative h-40 sm:h-72 rounded-3xl overflow-hidden group shadow-2xl cursor-pointer select-none ${
+      className={`relative h-40 sm:h-72 rounded-3xl overflow-hidden group shadow-2xl cursor-pointer select-none touch-pan-y ${
         isDragging ? 'cursor-grabbing' : 'cursor-grab'
       }`}
       onClick={handleCarouselClick}
@@ -144,6 +149,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ benefits }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
+      style={{ touchAction: 'pan-y' }} // Permitir scroll vertical, manejar horizontal nosotros
     >
       <img
         src={currentBenefit.carousel_image_url || currentBenefit.imageUrl || currentBenefit.image_url || defaultImages[currentIndex % 2]}

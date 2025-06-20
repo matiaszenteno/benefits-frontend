@@ -77,9 +77,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }, [filters.category, benefits]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-3 items-center w-full max-w-7xl mx-auto">
+    <div className="flex flex-col lg:flex-row gap-3 items-center w-full max-w-7xl mx-auto overflow-hidden">
       {/* Search Bar */}
-      <div className="flex-1 min-w-0 relative w-full max-w-full">
+      <div className="flex-1 min-w-0 relative w-full max-w-full overflow-hidden">
         <div className="relative flex items-center w-full">
           <Button
             onClick={() => onAIModeChange(!isAIMode)}
@@ -107,7 +107,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </div>
       </div>
       {/* Filters */}
-      <div className="flex gap-2 w-full lg:w-auto justify-center flex-shrink-0 mt-2 lg:mt-0">
+      <div className="flex gap-2 w-full lg:w-auto justify-center flex-shrink-0 mt-2 lg:mt-0 overflow-x-auto scrollbar-thin">
         <Select
           value={filters.category || 'all'}
           onValueChange={(value) => updateFilter('category', value)}
