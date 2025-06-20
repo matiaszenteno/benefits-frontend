@@ -113,7 +113,10 @@ export const getCategories = async (): Promise<Category[]> => {
   try {
     const response = await fetch(`${API_URL}/api/categories`);
     if (!response.ok) throw new Error('Error al obtener categorías');
-    return await response.json();
+    const data = await response.json();
+    
+    // Manejar tanto respuestas directas como con formato {data: [...]}
+    return Array.isArray(data) ? data : (data.data || []);
   } catch (error) {
     console.error('Error al obtener categorías:', error);
     throw error;
@@ -125,7 +128,10 @@ export const getSubcategories = async (): Promise<Subcategory[]> => {
   try {
     const response = await fetch(`${API_URL}/api/subcategories`);
     if (!response.ok) throw new Error('Error al obtener subcategorías');
-    return await response.json();
+    const data = await response.json();
+    
+    // Manejar tanto respuestas directas como con formato {data: [...]}
+    return Array.isArray(data) ? data : (data.data || []);
   } catch (error) {
     console.error('Error al obtener subcategorías:', error);
     throw error;
@@ -135,24 +141,36 @@ export const getSubcategories = async (): Promise<Subcategory[]> => {
 // Función para procesar los beneficios y asegurar que tengan todos los campos necesarios
 const processBenefits = (benefits: any[]): Benefit[] => {
   // Asegurar que benefits sea un array
+  if (!benefits) {
+    console.warn('processBenefits received null/undefined data');
+    return [];
+  }
+  
   if (!Array.isArray(benefits)) {
-    console.warn('processBenefits received non-array data:', benefits);
+    console.warn('processBenefits received non-array data:', typeof benefits, benefits);
     return [];
   }
   
   return benefits
-    .filter(benefit => benefit.is_active !== false) // Solo mostrar beneficios activos
+    .filter(benefit => {
+      // Filtrar elementos que no sean objetos válidos
+      if (!benefit || typeof benefit !== 'object') {
+        console.warn('Invalid benefit object:', benefit);
+        return false;
+      }
+      return benefit.is_active !== false; // Solo mostrar beneficios activos
+    })
     .map(benefit => ({
       ...benefit,
-      id: benefit.id?.toString() || '',
+      id: benefit.id?.toString() || Math.random().toString(36).substr(2, 9), // Fallback ID
       category: benefit.merchant_category || benefit.category || 'Sin categoría',
       merchant_sub_category: benefit.merchant_sub_category || benefit.sub_category,
-      name: benefit.merchant_name || benefit.name || '', // Usar nombre del merchant
+      name: benefit.merchant_name || benefit.name || 'Sin nombre', // Usar nombre del merchant
       // Mantener compatibilidad con campos existentes
       imageUrl: benefit.image_url || benefit.imageUrl,
       fullDescription: benefit.description,
       // Asegurar que todos los campos requeridos estén presentes
       description: benefit.description || '',
-      provider: benefit.provider || '',
+      provider: benefit.provider || 'Sin proveedor',
     }));
 }; 
