@@ -1,6 +1,6 @@
 import { Benefit, PaginatedBenefitsResponse, BenefitsFilter } from '../types/benefit';
 
-const API_URL = 'https://d34if2n2g5.execute-api.us-east-1.amazonaws.com/prod/benefits';
+const API_URL = 'https://d34if2n2g5.execute-api.us-east-1.amazonaws.com/prod';
 const AI_SEARCH_URL = 'https://d34if2n2g5.execute-api.us-east-1.amazonaws.com/prod/search';
 
 interface FilterParams {
